@@ -113,9 +113,69 @@ public:
     {
     }
 
+    void registerAccount()
+    {
+        ofstream fout;
+
+        fout.open("student.txt",ios::app);
+
+        cout<<"===== Student Registration ====="<<endl;
+
+        cout<<"Username : ";
+        cin>>username;
+
+        cout<<"Password : ";
+        cin>>password;
+
+        fout<<username<<" "<<password<<endl;
+
+        fout.close();
+
+        cout<<"Registration Successful"<<endl;
+    }
+
     void login()
     {
-        cout<<"Student Login"<<endl;
+        ifstream fin;
+
+        string u,p;
+
+        bool found=false;
+
+        fin.open("student.txt");
+
+        cout<<"===== Student Login ====="<<endl;
+
+        cout<<"Username : ";
+        cin>>username;
+
+        cout<<"Password : ";
+        cin>>password;
+
+        while(fin>>u>>p)
+        {
+            if(username==u && password==p)
+            {
+                found=true;
+                break;
+            }
+        }
+
+        fin.close();
+
+        if(found)
+        {
+            cout<<"Login Successful"<<endl;
+        }
+        else
+        {
+            cout<<"Invalid Username or Password"<<endl;
+        }
+    }
+
+    void logout()
+    {
+        cout<<"Student Logout Successful"<<endl;
     }
 
     ~StudentUser()
@@ -135,9 +195,69 @@ public:
     {
     }
 
+    void registerAccount()
+    {
+        ofstream fout;
+
+        fout.open("admin.txt",ios::app);
+
+        cout<<"===== Admin Registration ====="<<endl;
+
+        cout<<"Username : ";
+        cin>>username;
+
+        cout<<"Password : ";
+        cin>>password;
+
+        fout<<username<<" "<<password<<endl;
+
+        fout.close();
+
+        cout<<"Registration Successful"<<endl;
+    }
+
     void login()
     {
-        cout<<"Admin Login"<<endl;
+        ifstream fin;
+
+        string u,p;
+
+        bool found=false;
+
+        fin.open("admin.txt");
+
+        cout<<"===== Admin Login ====="<<endl;
+
+        cout<<"Username : ";
+        cin>>username;
+
+        cout<<"Password : ";
+        cin>>password;
+
+        while(fin>>u>>p)
+        {
+            if(username==u && password==p)
+            {
+                found=true;
+                break;
+            }
+        }
+
+        fin.close();
+
+        if(found)
+        {
+            cout<<"Login Successful"<<endl;
+        }
+        else
+        {
+            cout<<"Invalid Username or Password"<<endl;
+        }
+    }
+
+    void logout()
+    {
+        cout<<"Admin Logout Successful"<<endl;
     }
 
     ~Admin()
@@ -251,11 +371,54 @@ void averageCGPA(ResultRecord &r)
 //====================
 int main()
 {
-    ResultRecord system;
+    StudentUser student;
+    Admin admin;
 
-    cout<<"===================================="<<endl;
-    cout<<" STUDENT RESULT MANAGEMENT SYSTEM"<<endl;
-    cout<<"===================================="<<endl;
+    int choice;
+
+    do
+    {
+        cout<<endl;
+        cout<<"===================================="<<endl;
+        cout<<" STUDENT RESULT MANAGEMENT SYSTEM"<<endl;
+        cout<<"===================================="<<endl;
+
+        cout<<"1. Student Register"<<endl;
+        cout<<"2. Student Login"<<endl;
+        cout<<"3. Admin Register"<<endl;
+        cout<<"4. Admin Login"<<endl;
+        cout<<"5. Exit"<<endl;
+
+        cout<<"Enter Choice : ";
+        cin>>choice;
+
+        switch(choice)
+        {
+        case 1:
+            student.registerAccount();
+            break;
+
+        case 2:
+            student.login();
+            break;
+
+        case 3:
+            admin.registerAccount();
+            break;
+
+        case 4:
+            admin.login();
+            break;
+
+        case 5:
+            cout<<"Thank You"<<endl;
+            break;
+
+        default:
+            cout<<"Invalid Choice"<<endl;
+        }
+
+    }while(choice!=5);
 
     return 0;
 }
