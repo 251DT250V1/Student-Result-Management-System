@@ -1,0 +1,27 @@
+# Executables
+*.exe
+*.out
+
+# Object files
+*.o
+*.obj
+
+# Build folders
+build/
+
+# Visual Studio files
+.vs/
+*.sln
+*.vcxproj.user
+
+# CodeBlocks
+bin/
+obj/
+
+# CLion
+.idea/
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake-build-*/
