@@ -5,9 +5,6 @@
 
 using namespace std;
 
-//====================
-// STRUCT 1
-//====================
 struct Subject
 {
     char subjectCode[20];
@@ -16,9 +13,6 @@ struct Subject
     char grade;
 };
 
-//====================
-// STRUCT 2
-//====================
 struct Student
 {
     int studentID;
@@ -27,21 +21,16 @@ struct Student
     float cgpa;
 };
 
-//====================
-// LINKED LIST NODE
-//====================
 struct Node
 {
     Student student;
     Subject subject[10];
+
     int totalSubject;
 
-    Node* next;
+    Node *next;
 };
 
-//====================
-// FORWARD DECLARATION
-//====================
 class ResultRecord;
 
 void totalStudent(ResultRecord&);
@@ -49,12 +38,10 @@ void highestCGPA(ResultRecord&);
 void lowestCGPA(ResultRecord&);
 void averageCGPA(ResultRecord&);
 
-//====================
-// BASE CLASS 1
-//====================
 class User
 {
 protected:
+
     string username;
     string password;
 
@@ -75,18 +62,17 @@ public:
 
     virtual ~User()
     {
+
     }
 };
 
-//====================
-// BASE CLASS 2
-//====================
 class Record
 {
 public:
 
     Record()
     {
+
     }
 
     virtual void addRecord()=0;
@@ -99,206 +85,395 @@ public:
 
     virtual ~Record()
     {
+
     }
 };
 
-//====================
-// DERIVED CLASS 1
-//====================
 class StudentUser : public User
 {
 public:
 
     StudentUser()
     {
+    username="";
+    password="";
     }
 
-    void registerAccount()
-    {
-        ofstream fout;
+    void registerAccount();
 
-        fout.open("student.txt",ios::app);
+    void login();
 
-        cout<<"===== Student Registration ====="<<endl;
-
-        cout<<"Username : ";
-        cin>>username;
-
-        cout<<"Password : ";
-        cin>>password;
-
-        fout<<username<<" "<<password<<endl;
-
-        fout.close();
-
-        cout<<"Registration Successful"<<endl;
-    }
-
-    void login()
-    {
-        ifstream fin;
-
-        string u,p;
-
-        bool found=false;
-
-        fin.open("student.txt");
-
-        cout<<"===== Student Login ====="<<endl;
-
-        cout<<"Username : ";
-        cin>>username;
-
-        cout<<"Password : ";
-        cin>>password;
-
-        while(fin>>u>>p)
-        {
-            if(username==u && password==p)
-            {
-                found=true;
-                break;
-            }
-        }
-
-        fin.close();
-
-        if(found)
-        {
-            cout<<"Login Successful"<<endl;
-        }
-        else
-        {
-            cout<<"Invalid Username or Password"<<endl;
-        }
-    }
-
-    void logout()
-    {
-        cout<<"Student Logout Successful"<<endl;
-    }
+    void logout();
 
     ~StudentUser()
     {
-        cout<<"Student Destructor Called"<<endl;
+     cout<<"Student Object Deleted"<<endl;
     }
 };
 
-//====================
-// DERIVED CLASS 2
-//====================
 class Admin : public User
 {
 public:
 
     Admin()
     {
+    username="";
+    password="";
     }
 
-    void registerAccount()
-    {
-        ofstream fout;
+    void registerAccount();
 
-        fout.open("admin.txt",ios::app);
+    void login();
 
-        cout<<"===== Admin Registration ====="<<endl;
-
-        cout<<"Username : ";
-        cin>>username;
-
-        cout<<"Password : ";
-        cin>>password;
-
-        fout<<username<<" "<<password<<endl;
-
-        fout.close();
-
-        cout<<"Registration Successful"<<endl;
-    }
-
-    void login()
-    {
-        ifstream fin;
-
-        string u,p;
-
-        bool found=false;
-
-        fin.open("admin.txt");
-
-        cout<<"===== Admin Login ====="<<endl;
-
-        cout<<"Username : ";
-        cin>>username;
-
-        cout<<"Password : ";
-        cin>>password;
-
-        while(fin>>u>>p)
-        {
-            if(username==u && password==p)
-            {
-                found=true;
-                break;
-            }
-        }
-
-        fin.close();
-
-        if(found)
-        {
-            cout<<"Login Successful"<<endl;
-        }
-        else
-        {
-            cout<<"Invalid Username or Password"<<endl;
-        }
-    }
-
-    void logout()
-    {
-        cout<<"Admin Logout Successful"<<endl;
-    }
+    void logout();
 
     ~Admin()
     {
-        cout<<"Admin Destructor Called"<<endl;
+    cout<<"Admin Object Deleted"<<endl;
     }
 };
 
-//====================
-// DERIVED CLASS 3
-//====================
 class ResultRecord : public Record
 {
 private:
 
-    Node* head;
+    Node *head;
 
 public:
 
     ResultRecord()
     {
         head=NULL;
+        loadFile();
     }
 
-    //Friend Functions
-    friend void totalStudent(ResultRecord&);
-    friend void highestCGPA(ResultRecord&);
-    friend void lowestCGPA(ResultRecord&);
-    friend void averageCGPA(ResultRecord&);
+    void addRecord();
 
-    //Pure Virtual Functions
-    void addRecord()
+    void displayRecord();
+
+    void searchRecord();
+
+    void sortRecord();
+
+    void editRecord();
+
+    void deleteRecord();
+
+    void sortCGPA();
+
+    void addSubject();
+
+    void displaySubject();
+
+    void saveFile();
+
+    void loadFile();
+
+    void summaryReport();
+
+    void saveSummary();
+
+    void binarySearch();
+
+    void generateReport();
+
+    void displayRecord();
+
+    void displayRecord(int id);
+
+    void searchRecord();
+
+    void searchRecord(int id);
+
+    void sortRecord();
+    
+    void sortRecord(float dummy);
+
+    void login();
+    
+    void login(string u,string p);
+
+    void loadSummary();
+
+    void loadReport();
+
+    void searchSubject();
+
+    void sortSubject();
+
+    // friend functions
+    //Friend function 1
+   void totalStudent(ResultRecord &r)
+{
+    Node *current=r.head;
+
+    int total=0;
+
+    while(current!=NULL)
+    {
+        total++;
+
+        current=current->next;
+    }
+
+    cout<<"Total Students : "
+        <<total
+        <<endl;
+}
+    //friend function 2
+    void highestCGPA(ResultRecord &r)
+{
+    if(r.head==NULL)
+    {
+        return;
+    }
+
+    Node *current=r.head;
+
+    float highest=current->student.cgpa;
+
+    while(current!=NULL)
+    {
+        if(current->student.cgpa>highest)
+        {
+            highest=current->student.cgpa;
+        }
+
+        current=current->next;
+    }
+
+    cout<<"Highest CGPA : "
+        <<highest
+        <<endl;
+}
+    //friend function 3
+    void lowestCGPA(ResultRecord &r)
+{
+    if(r.head==NULL)
+    {
+        return;
+    }
+
+    Node *current=r.head;
+
+    float lowest=current->student.cgpa;
+
+    while(current!=NULL)
+    {
+        if(current->student.cgpa<lowest)
+        {
+            lowest=current->student.cgpa;
+        }
+
+        current=current->next;
+    }
+
+    cout<<"Lowest CGPA : "
+        <<lowest
+        <<endl;
+}
+    //friend function 4
+    void averageCGPA(ResultRecord &r)
+{
+    Node *current=r.head;
+
+    float total=0;
+
+    int count=0;
+
+    while(current!=NULL)
+    {
+        total+=current->student.cgpa;
+
+        count++;
+
+        current=current->next;
+    }
+
+    if(count!=0)
+    {
+        cout<<"Average CGPA : "
+            <<total/count
+            <<endl;
+    }
+}
+
+    ~ResultRecord()
+{
+    saveFile();
+
+    Node *current=head;
+
+    while(current!=NULL)
+    {
+        Node *temp=current;
+
+        current=current->next;
+
+        delete temp;
+    }
+
+    cout<<"Memory Released"<<endl;
+}
+};
+
+// Student Register
+void StudentUser::registerAccount()
+{
+    ofstream fout;
+
+    fout.open("student.txt",ios::app);
+
+    cout<<"\n===== Student Register ====="<<endl;
+
+    cout<<"Username : ";
+    cin>>username;
+
+    cout<<"Password : ";
+    cin>>password;
+
+    fout<<username<<" "<<password<<endl;
+
+    fout.close();
+
+    cout<<"Register Successfully"<<endl;
+}
+
+// Student Login
+void StudentUser::login()
+{
+    ifstream fin;
+
+    string u,p;
+
+    bool found=false;
+
+    fin.open("student.txt");
+
+    cout<<"\n===== Student Login ====="<<endl;
+
+    cout<<"Username : ";
+    cin>>username;
+
+    cout<<"Password : ";
+    cin>>password;
+
+    while(fin>>u>>p)
+    {
+        if(username==u && password==p)
+        {
+            found=true;
+        }
+    }
+
+    fin.close();
+
+    if(found)
+    {
+        cout<<"Login Successful"<<endl;
+    }
+    else
+    {
+        cout<<"Wrong Username or Password"<<endl;
+    }
+}
+
+// Student Logout
+void StudentUser::logout()
+{
+    cout<<"Student Logout Successfully"<<endl;
+}
+
+// Admin Register
+void Admin::registerAccount()
+{
+    ofstream fout;
+
+    fout.open("admin.txt",ios::app);
+
+    cout<<"\n===== Admin Register ====="<<endl;
+
+    cout<<"Username : ";
+    cin>>username;
+
+    cout<<"Password : ";
+    cin>>password;
+
+    fout<<username<<" "<<password<<endl;
+
+    fout.close();
+
+    cout<<"Register Successfully"<<endl;
+}
+
+// Admin Login
+void Admin::login(string u,string p)
+{
+    username=u;
+    password=p;
+
+    cout<<"Admin Login"<<endl;
+}
+
+void Admin::login()
+{
+    ifstream fin;
+
+    string u,p;
+
+    bool found=false;
+
+    fin.open("admin.txt");
+
+    cout<<"\n===== Admin Login ====="<<endl;
+
+    cout<<"Username : ";
+    cin>>username;
+
+    cout<<"Password : ";
+    cin>>password;
+
+    while(fin>>u>>p)
+    {
+        if(username==u && password==p)
+        {
+            found=true;
+        }
+    }
+
+    fin.close();
+
+    if(found)
+    {
+        cout<<"Login Successful"<<endl;
+    }
+    else
+    {
+        cout<<"Wrong Username or Password"<<endl;
+    }
+}
+
+// Admin Logout
+void Admin::logout()
+{
+    cout<<"Admin Logout Successfully"<<endl;
+}
+
+void ResultRecord::addRecord()
 {
     try
     {
-        Node *newNode = new Node;
+        Node *newNode=new Node;
 
-        cout<<"===== Add Student ====="<<endl;
+        cout<<"\n===== Add Student ====="<<endl;
 
         cout<<"Student ID : ";
         cin>>newNode->student.studentID;
+
+        if(cin.fail())
+        {
+            throw 1;
+        }
 
         cin.ignore();
 
@@ -330,51 +505,42 @@ public:
             current->next=newNode;
         }
 
-        cout<<"Record Added Successfully"<<endl;
+        cout<<"Student Added Successfully"<<endl;
     }
-    catch(...)
+    catch(int)
     {
-        cout<<"Error Adding Record"<<endl;
+        cout<<"Invalid Input"<<endl;
+
+        cin.clear();
+        cin.ignore(1000,'\n');
     }
 }
-
-    void displayRecord()
+void ResultRecord::displayRecord(int id)
 {
     Node *current=head;
 
-    if(head==NULL)
-    {
-        cout<<"No Record Found"<<endl;
-        return;
-    }
-
-    cout<<"===== Student Record ====="<<endl;
-
     while(current!=NULL)
     {
-        cout<<"Student ID : "
-            <<current->student.studentID
-            <<endl;
+        if(current->student.studentID==id)
+        {
+            cout<<"Student ID : "
+                <<current->student.studentID
+                <<endl;
 
-        cout<<"Name : "
-            <<current->student.name
-            <<endl;
+            cout<<"Name : "
+                <<current->student.name
+                <<endl;
 
-        cout<<"Course : "
-            <<current->student.course
-            <<endl;
-
-        cout<<"CGPA : "
-            <<current->student.cgpa
-            <<endl;
-
-        cout<<"---------------------"<<endl;
+            return;
+        }
 
         current=current->next;
     }
+
+    cout<<"Student Not Found"<<endl;
 }
 
-void saveFile()
+void ResultRecord::saveFile()
 {
     ofstream fout;
 
@@ -385,11 +551,8 @@ void saveFile()
     while(current!=NULL)
     {
         fout<<current->student.studentID<<endl;
-
         fout<<current->student.name<<endl;
-
         fout<<current->student.course<<endl;
-
         fout<<current->student.cgpa<<endl;
 
         current=current->next;
@@ -400,7 +563,7 @@ void saveFile()
     cout<<"Data Saved Successfully"<<endl;
 }
 
-void loadFile()
+void ResultRecord::loadFile()
 {
     ifstream fin;
 
@@ -427,6 +590,7 @@ void loadFile()
 
         fin.ignore();
 
+        newNode->totalSubject=0;
         newNode->next=NULL;
 
         if(fin.fail())
@@ -455,77 +619,790 @@ void loadFile()
     fin.close();
 }
 
-    void searchRecord()
-    {
-
-    }
-
-    void sortRecord()
-    {
-
-    }
-
-    ~ResultRecord()
-    {
-        head=NULL;
-        loadFile();
-
-        while(current!=NULL)
-        {
-            Node *temp=current;
-            current=current->next;
-            delete temp;
-        }
-
-        cout<<"Memory Released"<<endl;
-    }
-};
-
-//====================
-// FRIEND FUNCTION 1
-//====================
-void totalStudent(ResultRecord &r)
+// Edit student information
+void ResultRecord::editRecord()
 {
-    Node *current=r.head;
+    int id;
+    bool found=false;
 
-    int count=0;
+    cout<<"\nEnter Student ID to edit : ";
+    cin>>id;
+
+    Node *current=head;
 
     while(current!=NULL)
     {
-        count++;
+        if(current->student.studentID==id)
+        {
+            found=true;
+
+            cin.ignore();
+
+            cout<<"New Name : ";
+            cin.getline(current->student.name,50);
+
+            cout<<"New Course : ";
+            cin.getline(current->student.course,50);
+
+            cout<<"New CGPA : ";
+            cin>>current->student.cgpa;
+
+            cout<<"Record Updated Successfully"<<endl;
+
+            break;
+        }
+
         current=current->next;
     }
 
-    cout<<"Total Student = "<<count<<endl;
+    if(found==false)
+    {
+        cout<<"Student Not Found"<<endl;
+    }
 }
 
-//====================
-// FRIEND FUNCTION 2
-//====================
-void highestCGPA(ResultRecord &r)
+// Delete student record
+void ResultRecord::deleteRecord()
 {
+    int id;
 
+    cout<<"\nEnter Student ID to delete : ";
+    cin>>id;
+
+    Node *current=head;
+    Node *previous=NULL;
+
+    while(current!=NULL)
+    {
+        if(current->student.studentID==id)
+        {
+            // first node
+            if(current==head)
+            {
+                head=head->next;
+            }
+            else
+            {
+                previous->next=current->next;
+            }
+
+            delete current;
+
+            cout<<"Record Deleted"<<endl;
+
+            return;
+        }
+
+        previous=current;
+        current=current->next;
+    }
+
+    cout<<"Student Not Found"<<endl;
 }
 
-//====================
-// FRIEND FUNCTION 3
-//====================
-void lowestCGPA(ResultRecord &r)
+void ResultRecord::searchRecord(int id)
 {
+    Node *current=head;
 
+    while(current!=NULL)
+    {
+        if(current->student.studentID==id)
+        {
+            cout<<"Record Found"<<endl;
+
+            return;
+        }
+
+        current=current->next;
+    }
+
+    cout<<"Record Not Found"<<endl;
 }
 
-//====================
-// FRIEND FUNCTION 4
-//====================
-void averageCGPA(ResultRecord &r)
+// Add subject result
+void ResultRecord::addSubject()
 {
+    int id;
 
+    cout<<"\nEnter Student ID : ";
+    cin>>id;
+
+    Node *current=head;
+
+    while(current!=NULL)
+    {
+        if(current->student.studentID==id)
+        {
+            int n=current->totalSubject;
+
+            cout<<"Subject Code : ";
+            cin>>current->subject[n].subjectCode;
+
+            cin.ignore();
+
+            cout<<"Subject Name : ";
+            cin.getline(current->subject[n].subjectName,50);
+
+            cout<<"Marks : ";
+            cin>>current->subject[n].marks;
+
+            // simple grading
+            if(current->subject[n].marks>=80)
+                current->subject[n].grade='A';
+            else if(current->subject[n].marks>=70)
+                current->subject[n].grade='B';
+            else if(current->subject[n].marks>=60)
+                current->subject[n].grade='C';
+            else if(current->subject[n].marks>=50)
+                current->subject[n].grade='D';
+            else
+                current->subject[n].grade='F';
+
+            current->totalSubject++;
+
+            cout<<"Subject Added Successfully"<<endl;
+
+            return;
+        }
+
+        current=current->next;
+    }
+
+    cout<<"Student Not Found"<<endl;
 }
 
-//====================
-// MAIN FUNCTION
-//====================
+void ResultRecord::displaySubject()
+{
+    int id;
+
+    cout<<"\nEnter Student ID : ";
+    cin>>id;
+
+    Node *current=head;
+
+    while(current!=NULL)
+    {
+        if(current->student.studentID==id)
+        {
+            cout<<"\nStudent Name : "
+                <<current->student.name
+                <<endl;
+
+            cout<<"--------------------"<<endl;
+
+            for(int i=0;i<current->totalSubject;i++)
+            {
+                cout<<"Subject Code : "
+                    <<current->subject[i].subjectCode
+                    <<endl;
+
+                cout<<"Subject Name : "
+                    <<current->subject[i].subjectName
+                    <<endl;
+
+                cout<<"Marks : "
+                    <<current->subject[i].marks
+                    <<endl;
+
+                cout<<"Grade : "
+                    <<current->subject[i].grade
+                    <<endl;
+
+                cout<<"--------------------"<<endl;
+            }
+
+            return;
+        }
+
+        current=current->next;
+    }
+
+    cout<<"Student Not Found"<<endl;
+}
+
+// Bubble Sort by Student ID
+
+void ResultRecord::sortRecord(float dummy)
+{
+    sortCGPA();
+}
+
+void ResultRecord::sortRecord()
+{
+    if(head==NULL)
+    {
+        cout<<"No Record Found"<<endl;
+        return;
+    }
+
+    Node *current;
+    Node *nextNode;
+
+    bool swap;
+
+    do
+    {
+        swap=false;
+
+        current=head;
+
+        while(current->next!=NULL)
+        {
+            nextNode=current->next;
+
+            if(current->student.studentID >
+               nextNode->student.studentID)
+            {
+                Student temp;
+
+                temp=current->student;
+
+                current->student=nextNode->student;
+
+                nextNode->student=temp;
+
+                swap=true;
+            }
+
+            current=current->next;
+        }
+
+    }while(swap);
+
+    cout<<"Records Sorted Successfully"<<endl;
+}
+
+// Bubble Sort by CGPA
+void ResultRecord::sortCGPA()
+{
+    if(head==NULL)
+    {
+        cout<<"No Record Found"<<endl;
+        return;
+    }
+
+    Node *current;
+    Node *nextNode;
+
+    bool swap;
+
+    do
+    {
+        swap=false;
+
+        current=head;
+
+        while(current->next!=NULL)
+        {
+            nextNode=current->next;
+
+            if(current->student.cgpa <
+               nextNode->student.cgpa)
+            {
+                Student temp;
+
+                temp=current->student;
+
+                current->student=nextNode->student;
+
+                nextNode->student=temp;
+
+                swap=true;
+            }
+
+            current=current->next;
+        }
+
+    }while(swap);
+
+    cout<<"Sorted by CGPA"<<endl;
+}
+
+// Show simple summary
+void ResultRecord::summaryReport()
+{
+    Node *current=head;
+
+    int total=0;
+
+    while(current!=NULL)
+    {
+        total++;
+
+        current=current->next;
+    }
+
+    cout<<endl;
+
+    cout<<"===== Summary Report ====="<<endl;
+
+    cout<<"Total Students : "
+        <<total
+        <<endl;
+}
+
+void ResultRecord::saveSummary()
+{
+    ofstream fout;
+
+    fout.open("summary.txt");
+
+    Node *current=head;
+
+    int total=0;
+
+    while(current!=NULL)
+    {
+        total++;
+
+        current=current->next;
+    }
+
+    fout<<"===== Summary Report ====="<<endl;
+
+    fout<<"Total Students : "
+        <<total
+        <<endl;
+
+    fout.close();
+
+    cout<<"Summary Saved Successfully"<<endl;
+}
+
+// Search student by ID using Binary Search
+void ResultRecord::binarySearch()
+{
+    Student arr[100];
+
+    int count=0;
+
+    Node *current=head;
+
+    while(current!=NULL)
+    {
+        arr[count]=current->student;
+
+        count++;
+
+        current=current->next;
+    }
+
+    int id;
+
+    cout<<"Enter Student ID : ";
+    cin>>id;
+
+    int low=0;
+    int high=count-1;
+    int mid;
+
+    bool found=false;
+
+    while(low<=high)
+    {
+        mid=(low+high)/2;
+
+        if(arr[mid].studentID==id)
+        {
+            cout<<"\nStudent Found"<<endl;
+
+            cout<<"ID : "
+                <<arr[mid].studentID
+                <<endl;
+
+            cout<<"Name : "
+                <<arr[mid].name
+                <<endl;
+
+            cout<<"Course : "
+                <<arr[mid].course
+                <<endl;
+
+            cout<<"CGPA : "
+                <<arr[mid].cgpa
+                <<endl;
+
+            found=true;
+
+            break;
+        }
+        else if(id<arr[mid].studentID)
+        {
+            high=mid-1;
+        }
+        else
+        {
+            low=mid+1;
+        }
+    }
+
+    if(found==false)
+    {
+        cout<<"Student Not Found"<<endl;
+    }
+}
+
+// Save report into report.txt
+void ResultRecord::generateReport()
+{
+    ofstream fout;
+
+    fout.open("report.txt");
+
+    Node *current=head;
+
+    int total=0;
+
+    float sum=0;
+
+    while(current!=NULL)
+    {
+        total++;
+
+        sum+=current->student.cgpa;
+
+        current=current->next;
+    }
+
+    fout<<"===== Report ====="<<endl;
+
+    fout<<"Total Students : "
+        <<total
+        <<endl;
+
+    if(total!=0)
+    {
+        fout<<"Average CGPA : "
+            <<sum/total
+            <<endl;
+    }
+
+    fout.close();
+
+    cout<<"Report Generated Successfully"<<endl;
+}
+
+// Read summary file
+void ResultRecord::loadSummary()
+{
+    ifstream fin;
+
+    string line;
+
+    fin.open("summary.txt");
+
+    if(fin.fail())
+    {
+        cout<<"Summary File Not Found"<<endl;
+        return;
+    }
+
+    cout<<"\n===== Summary ====="<<endl;
+
+    while(getline(fin,line))
+    {
+        cout<<line<<endl;
+    }
+
+    fin.close();
+}
+
+// Display report file
+void ResultRecord::loadReport()
+{
+    ifstream fin;
+
+    string line;
+
+    fin.open("report.txt");
+
+    if(fin.fail())
+    {
+        cout<<"Report File Not Found"<<endl;
+        return;
+    }
+
+    cout<<"\n===== Report ====="<<endl;
+
+    while(getline(fin,line))
+    {
+        cout<<line<<endl;
+    }
+
+    fin.close();
+}
+
+// Search subject by code
+void ResultRecord::searchSubject()
+{
+    char code[20];
+
+    cout<<"Enter Subject Code : ";
+    cin>>code;
+
+    Node *current=head;
+
+    while(current!=NULL)
+    {
+        for(int i=0;i<current->totalSubject;i++)
+        {
+            if(strcmp(current->subject[i].subjectCode,code)==0)
+            {
+                cout<<"\nSubject Found"<<endl;
+
+                cout<<"Student Name : "
+                    <<current->student.name
+                    <<endl;
+
+                cout<<"Subject Name : "
+                    <<current->subject[i].subjectName
+                    <<endl;
+
+                cout<<"Marks : "
+                    <<current->subject[i].marks
+                    <<endl;
+
+                return;
+            }
+        }
+
+        current=current->next;
+    }
+
+    cout<<"Subject Not Found"<<endl;
+}
+
+// Bubble sort subject marks
+void ResultRecord::sortSubject()
+{
+    Node *current=head;
+
+    while(current!=NULL)
+    {
+        for(int i=0;i<current->totalSubject-1;i++)
+        {
+            for(int j=0;j<current->totalSubject-1-i;j++)
+            {
+                if(current->subject[j].marks <
+                   current->subject[j+1].marks)
+                {
+                    Subject temp;
+
+                    temp=current->subject[j];
+
+                    current->subject[j]=current->subject[j+1];
+
+                    current->subject[j+1]=temp;
+                }
+            }
+        }
+
+        current=current->next;
+    }
+
+    cout<<"Subject Sorted Successfully"<<endl;
+}
+
+void ResultRecord::deleteRecord()
+{
+    try
+    {
+        int id;
+
+        cout<<"Enter Student ID : ";
+        cin>>id;
+
+        if(cin.fail())
+        {
+            throw 1;
+        }
+
+        Node *current=head;
+        Node *previous=NULL;
+
+        while(current!=NULL)
+        {
+            if(current->student.studentID==id)
+            {
+                if(current==head)
+                {
+                    head=head->next;
+                }
+                else
+                {
+                    previous->next=current->next;
+                }
+
+                delete current;
+
+                cout<<"Record Deleted"<<endl;
+
+                return;
+            }
+
+            previous=current;
+            current=current->next;
+        }
+
+        cout<<"Student Not Found"<<endl;
+    }
+
+    catch(int)
+    {
+        cout<<"Invalid Input"<<endl;
+
+        cin.clear();
+
+        cin.ignore(1000,'\n');
+    }
+}
+
+void adminMenu(ResultRecord &system)
+{
+    int choice;
+
+    do
+    {
+        cout<<"\n========== Admin Menu =========="<<endl;
+
+        cout<<"1. Add Student"<<endl;
+        cout<<"2. Display Student"<<endl;
+        cout<<"3. Edit Student"<<endl;
+        cout<<"4. Delete Student"<<endl;
+        cout<<"5. Search Student"<<endl;
+        cout<<"6. Sort By Student ID"<<endl;
+        cout<<"7. Sort By CGPA"<<endl;
+        cout<<"8. Add Subject"<<endl;
+        cout<<"9. Display Subject"<<endl;
+        cout<<"10. Binary Search"<<endl;
+        cout<<"11. Generate Report"<<endl;
+        cout<<"12. Search Subject"<<endl;
+        cout<<"13. Sort Subject"<<endl;
+        cout<<"14. View Report"<<endl;
+        cout<<"15. Exit"<<endl;
+
+        cout<<"Enter Choice : ";
+        cin>>choice;
+
+        switch(choice)
+        {
+        case 1:
+            system.addRecord();
+            break;
+
+        case 2:
+            system.displayRecord();
+            break;
+
+        case 3:
+            system.editRecord();
+            break;
+
+        case 4:
+            system.deleteRecord();
+            break;
+
+        case 5:
+            system.searchRecord();
+            break;
+
+        case 6:
+            system.sortRecord();
+            break;
+
+        case 7:
+            system.sortCGPA();
+            break;
+
+        case 8:
+            system.addSubject();
+            break;
+
+        case 9:
+            system.displaySubject();
+            break;
+
+        case 10:
+            system.binarySearch();
+            break;
+
+        case 11:
+            system.generateReport();
+            break;
+
+        case 12:
+            system.searchSubject();
+            break;
+
+        case 13:
+            system.sortSubject();
+            break;
+
+        case 14:
+            system.viewReport();
+            break;
+
+        case 15:
+            cout<<"Back to Main Menu"<<endl;
+            break;
+
+        default:
+            cout<<"Invalid Choice"<<endl;
+        }
+
+    }while(choice!=15);
+}
+
+void studentMenu(ResultRecord &system)
+{
+    int choice;
+
+    do
+    {
+        cout<<"\n========== Student Menu =========="<<endl;
+
+        cout<<"1. Display Result"<<endl;
+        cout<<"2. Search Student"<<endl;
+        cout<<"3. Summary Report"<<endl;
+        cout<<"5. View Saved Summary"<<endl;
+        cout<<"6. Exit"<<endl;
+
+        cout<<"Enter Choice : ";
+        cin>>choice;
+
+        switch(choice)
+        {
+        case 1:
+            system.displayRecord();
+            break;
+
+        case 2:
+            system.searchRecord();
+            break;
+
+        case 3:
+            system.summaryReport();
+            break;
+
+        case 4:
+            system.saveSummary();
+            break;
+
+        case 5:
+            system.viewSavedSummary();
+            break;
+
+        case 6:
+            cout<<"Back to Main Menu"<<endl;
+            break;
+
+        default:
+            cout<<"Invalid Choice"<<endl;
+        }
+
+    }while(choice!=6);
+}
+
 int main()
 {
     StudentUser student;
@@ -536,10 +1413,9 @@ int main()
 
     do
     {
-        cout<<endl;
-        cout<<"===================================="<<endl;
-        cout<<" STUDENT RESULT MANAGEMENT SYSTEM"<<endl;
-        cout<<"===================================="<<endl;
+        cout<<"\n=================================="<<endl;
+        cout<<"Student Result Management System"<<endl;
+        cout<<"=================================="<<endl;
 
         cout<<"1. Student Register"<<endl;
         cout<<"2. Student Login"<<endl;
@@ -558,6 +1434,9 @@ int main()
 
         case 2:
             student.login();
+
+            studentMenu(system);
+
             break;
 
         case 3:
@@ -566,30 +1445,20 @@ int main()
 
         case 4:
             admin.login();
+
+            adminMenu(system);
+
             break;
 
         case 5:
-              system.addRecord();
-              break;
-
-        case 6:
-              system.displayRecord();
-              break;
-
-        case 7:
-              system.saveFile();
-              break;
-
-        case 8:
-            system.loadFile();
+            cout<<"Thank You"<<endl;
             break;
-
 
         default:
             cout<<"Invalid Choice"<<endl;
         }
 
-    }while(choice!=8);
+    }while(choice!=5);
 
     return 0;
 }
