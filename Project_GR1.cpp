@@ -515,6 +515,43 @@ void ResultRecord::addRecord()
         cin.ignore(1000,'\n');
     }
 }
+
+void ResultRecord::displayRecord()
+{
+    Node *current=head;
+
+    if(head==NULL)
+    {
+        cout<<"No Record Found"<<endl;
+        return;
+    }
+
+    cout<<"\n===== Student List ====="<<endl;
+
+    while(current!=NULL)
+    {
+        cout<<"Student ID : "
+            <<current->student.studentID
+            <<endl;
+
+        cout<<"Name : "
+            <<current->student.name
+            <<endl;
+
+        cout<<"Course : "
+            <<current->student.course
+            <<endl;
+
+        cout<<"CGPA : "
+            <<current->student.cgpa
+            <<endl;
+
+        cout<<"---------------------"<<endl;
+
+        current=current->next;
+    }
+}
+
 void ResultRecord::displayRecord(int id)
 {
     Node *current=head;
@@ -694,6 +731,46 @@ void ResultRecord::deleteRecord()
         }
 
         previous=current;
+        current=current->next;
+    }
+
+    cout<<"Student Not Found"<<endl;
+}
+
+void ResultRecord::searchRecord()
+{
+    int id;
+
+    cout<<"\nEnter Student ID : ";
+    cin>>id;
+
+    Node *current=head;
+
+    while(current!=NULL)
+    {
+        if(current->student.studentID==id)
+        {
+            cout<<"\nStudent Found"<<endl;
+
+            cout<<"ID : "
+                <<current->student.studentID
+                <<endl;
+
+            cout<<"Name : "
+                <<current->student.name
+                <<endl;
+
+            cout<<"Course : "
+                <<current->student.course
+                <<endl;
+
+            cout<<"CGPA : "
+                <<current->student.cgpa
+                <<endl;
+
+            return;
+        }
+
         current=current->next;
     }
 
