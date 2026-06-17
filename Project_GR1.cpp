@@ -290,14 +290,170 @@ public:
 
     //Pure Virtual Functions
     void addRecord()
+{
+    try
     {
+        Node *newNode = new Node;
 
+        cout<<"===== Add Student ====="<<endl;
+
+        cout<<"Student ID : ";
+        cin>>newNode->student.studentID;
+
+        cin.ignore();
+
+        cout<<"Student Name : ";
+        cin.getline(newNode->student.name,50);
+
+        cout<<"Course : ";
+        cin.getline(newNode->student.course,50);
+
+        cout<<"CGPA : ";
+        cin>>newNode->student.cgpa;
+
+        newNode->totalSubject=0;
+        newNode->next=NULL;
+
+        if(head==NULL)
+        {
+            head=newNode;
+        }
+        else
+        {
+            Node *current=head;
+
+            while(current->next!=NULL)
+            {
+                current=current->next;
+            }
+
+            current->next=newNode;
+        }
+
+        cout<<"Record Added Successfully"<<endl;
     }
+    catch(...)
+    {
+        cout<<"Error Adding Record"<<endl;
+    }
+}
 
     void displayRecord()
-    {
+{
+    Node *current=head;
 
+    if(head==NULL)
+    {
+        cout<<"No Record Found"<<endl;
+        return;
     }
+
+    cout<<"===== Student Record ====="<<endl;
+
+    while(current!=NULL)
+    {
+        cout<<"Student ID : "
+            <<current->student.studentID
+            <<endl;
+
+        cout<<"Name : "
+            <<current->student.name
+            <<endl;
+
+        cout<<"Course : "
+            <<current->student.course
+            <<endl;
+
+        cout<<"CGPA : "
+            <<current->student.cgpa
+            <<endl;
+
+        cout<<"---------------------"<<endl;
+
+        current=current->next;
+    }
+}
+
+void saveFile()
+{
+    ofstream fout;
+
+    fout.open("result.txt");
+
+    Node *current=head;
+
+    while(current!=NULL)
+    {
+        fout<<current->student.studentID<<endl;
+
+        fout<<current->student.name<<endl;
+
+        fout<<current->student.course<<endl;
+
+        fout<<current->student.cgpa<<endl;
+
+        current=current->next;
+    }
+
+    fout.close();
+
+    cout<<"Data Saved Successfully"<<endl;
+}
+
+void loadFile()
+{
+    ifstream fin;
+
+    fin.open("result.txt");
+
+    if(fin.fail())
+    {
+        return;
+    }
+
+    while(!fin.eof())
+    {
+        Node *newNode=new Node;
+
+        fin>>newNode->student.studentID;
+
+        fin.ignore();
+
+        fin.getline(newNode->student.name,50);
+
+        fin.getline(newNode->student.course,50);
+
+        fin>>newNode->student.cgpa;
+
+        fin.ignore();
+
+        newNode->next=NULL;
+
+        if(fin.fail())
+        {
+            delete newNode;
+            break;
+        }
+
+        if(head==NULL)
+        {
+            head=newNode;
+        }
+        else
+        {
+            Node *current=head;
+
+            while(current->next!=NULL)
+            {
+                current=current->next;
+            }
+
+            current->next=newNode;
+        }
+    }
+
+    fin.close();
+}
 
     void searchRecord()
     {
@@ -311,7 +467,8 @@ public:
 
     ~ResultRecord()
     {
-        Node *current=head;
+        head=NULL;
+        loadFile();
 
         while(current!=NULL)
         {
@@ -373,6 +530,7 @@ int main()
 {
     StudentUser student;
     Admin admin;
+    ResultRecord system;
 
     int choice;
 
@@ -411,14 +569,27 @@ int main()
             break;
 
         case 5:
-            cout<<"Thank You"<<endl;
+              system.addRecord();
+              break;
+
+        case 6:
+              system.displayRecord();
+              break;
+
+        case 7:
+              system.saveFile();
+              break;
+
+        case 8:
+            system.loadFile();
             break;
+
 
         default:
             cout<<"Invalid Choice"<<endl;
         }
 
-    }while(choice!=5);
+    }while(choice!=8);
 
     return 0;
 }
