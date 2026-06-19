@@ -1361,6 +1361,13 @@ void adminMenu(ResultRecord &system)
         cout<<"Enter Choice : ";
         cin>>choice;
 
+        if (cin.fail()) {
+
+            cin.clear();
+            cin.ignore(1000, '\n');
+            choice = 0; 
+        }
+
         switch(choice)
         {
         case 1:
@@ -1441,11 +1448,18 @@ void studentMenu(ResultRecord &system)
         cout<<"1. Display Result"<<endl;
         cout<<"2. Search Student"<<endl;
         cout<<"3. Summary Report"<<endl;
+        cout<<"4. Save Summary"<<endl;
         cout<<"5. View Saved Summary"<<endl;
         cout<<"6. Exit"<<endl;
 
         cout<<"Enter Choice : ";
         cin>>choice;
+
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(1000, '\n');
+            choice = 0; 
+        }
 
         switch(choice)
         {
@@ -1502,6 +1516,12 @@ int main()
 
         cout<<"Enter Choice : ";
         cin>>choice;
+
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(1000, '\n');
+            choice = 0; 
+        }
 
         switch(choice)
         {
