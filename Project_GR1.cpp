@@ -332,7 +332,7 @@ void StudentUser::registerAccount()
     cout<<"Password : ";
     cin>>password;
 
-    fout<<username<<" "<<password<<endl;
+    fout<<username<<endl<<password<<endl;
 
     fout.close();
 
@@ -353,12 +353,12 @@ void StudentUser::login()
     cout<<"\n===== Student Login ====="<<endl;
 
     cout<<"Username : ";
-    cin>>username;
+    getline(cin, username);
 
     cout<<"Password : ";
-    cin>>password;
+    getline(cin, password);
 
-    while(fin>>u>>p)
+    while(getline(fin,u) && getline(fin,p))
     {
         if(username==u && password==p)
         {
@@ -399,7 +399,7 @@ void Admin::registerAccount()
     cout<<"Password : ";
     cin>>password;
 
-    fout<<username<<" "<<password<<endl;
+    fout<<username<<endl<<password<<endl;
 
     fout.close();
 
@@ -428,17 +428,15 @@ void Admin::login()
     cout<<"\n===== Admin Login ====="<<endl;
 
     cout<<"Username : ";
-    cin>>username;
+    getline(cin, username);
 
     cout<<"Password : ";
-    cin>>password;
+    getline(cin, password);
 
-    while(fin>>u>>p)
+    while(getline(fin,u) && getline(fin,p))
     {
         if(username==u && password==p)
-        {
             found=true;
-        }
     }
 
     fin.close();
@@ -1480,7 +1478,7 @@ void studentMenu(ResultRecord &system)
             break;
 
         case 5:
-            system.viewSavedSummary();
+            system.loadSummary();
             break;
 
         case 6:
