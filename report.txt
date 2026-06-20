@@ -1,8 +1,10 @@
-===== Individual Student Report =====
-Student ID : 1231203190
-Name : LAI JIA HAO
-Course : DIT
-CGPA : 4
+===== Report =====
+Total Students : 2
+Average CGPA : 3.75
 
---- Subjects ---
-25 - DATA STRUC : 80 (A)
+--- Grade Distribution (All Subjects) ---
+Grade A : 2
+Grade B : 0
+Grade C : 0
+Grade D : 0
+Grade F : 0
