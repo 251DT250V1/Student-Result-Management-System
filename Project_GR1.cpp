@@ -2,6 +2,7 @@
 #include<fstream>
 #include<cstring>
 #include<string>
+#include<cstdlib>
 
 using namespace std;
 
@@ -55,6 +56,22 @@ void totalStudent(ResultRecord&);
 void highestCGPA(ResultRecord&);
 void lowestCGPA(ResultRecord&);
 void averageCGPA(ResultRecord&);
+
+// ============================================================
+// SCREEN UTILITIES FOR DEV C++ (WINDOWS)
+// ============================================================
+void clearScreen() {
+    system("cls"); // 调用 Windows 系统清屏
+}
+
+void pauseScreen() {
+    cout << "\nPress Enter to continue...";
+    // 关键防御：防止混用 cin >> 和 cin.getline 时，残留的换行符导致“按回车继续”被跳过
+    if (cin.peek() == '\n') {
+        cin.ignore();
+    }
+    cin.get(); // 等待用户敲击回车
+}
 
 class User
 {
@@ -144,6 +161,9 @@ public:
     bool login();
 
     void logout();
+    void profileMenu();
+	void viewProfile();
+	void changePassword();
 
     ~StudentUser()
     {
@@ -583,6 +603,114 @@ void StudentUser::logout()
     cout<<"Student Logout Successfully"<<endl;
 }
 
+void StudentUser::viewProfile()
+{
+    cout<<"\n===== MY PROFILE ====="<<endl;
+
+    cout<<"Username : "
+        <<username
+        <<endl;
+
+    cout<<"Role : Student"<<endl;
+}
+
+void StudentUser::changePassword()
+{
+    char newPassword[50];
+
+    cin.ignore();
+
+    cout<<"Enter New Password : ";
+    cin.getline(newPassword,50);
+
+    if(strlen(newPassword)==0)
+    {
+        cout<<"Password Cannot Be Empty"<<endl;
+        return;
+    }
+
+    ifstream fin("student.txt");
+    ofstream fout("temp.txt");
+
+    string u,p;
+
+    while(getline(fin,u) && getline(fin,p))
+    {
+        if(u==username)
+        {
+            fout<<u<<endl;
+            fout<<newPassword<<endl;
+
+            strcpy(password,newPassword);
+        }
+        else
+        {
+            fout<<u<<endl;
+            fout<<p<<endl;
+        }
+    }
+
+    fin.close();
+    fout.close();
+
+    remove("student.txt");
+    rename("temp.txt","student.txt");
+
+    cout<<"Password Changed Successfully"<<endl;
+}
+
+void StudentUser::profileMenu()
+{
+    int choice;
+
+    do
+    {
+        clearScreen();
+
+        cout<<"\n===== STUDENT PROFILE ====="<<endl;
+
+        cout<<"1. View Profile"<<endl;
+        cout<<"2. Change Password"<<endl;
+        cout<<"3. Back"<<endl;
+
+        cout<<"Enter Choice : ";
+
+        cin>>choice;
+
+        if(cin.fail())
+        {
+            cin.clear();
+            cin.ignore(1000,'\n');
+            choice=0;
+        }
+
+        switch(choice)
+        {
+            case 1:
+
+                viewProfile();
+                pauseScreen();
+                break;
+
+            case 2:
+
+                changePassword();
+                pauseScreen();
+                break;
+
+            case 3:
+
+                break;
+
+            default:
+
+                cout<<"Invalid Choice"<<endl;
+                pauseScreen();
+        }
+
+    }while(choice!=3);
+}
+
 // Admin Register
 void Admin::registerAccount()
 {
@@ -741,6 +869,23 @@ void ResultRecord::addRecord()
             delete newNode;
             throw 1;
         }
+        
+        Node *check=head;
+
+		while(check!=NULL)
+		{
+		    if(check->student.studentID==
+		       newNode->student.studentID)
+		    {
+		        delete newNode;
+		
+		        cout<<"Student ID Already Exists"<<endl;
+		
+		        return;
+		    }
+		
+		    check=check->next;
+		}
 
         cin.ignore();
 
@@ -907,6 +1052,15 @@ void ResultRecord::saveFile()
         fout<<current->student.course<<endl;
         fout<<current->student.cgpa<<endl;
         fout<<current->student.enrolledCourseCode<<endl;
+        fout<<current->totalSubject<<endl;
+
+		for(int i=0;i<current->totalSubject;i++)
+		{
+		    fout<<current->subject[i].subjectCode<<endl;
+		    fout<<current->subject[i].subjectName<<endl;
+		    fout<<current->subject[i].marks<<endl;
+		    fout<<current->subject[i].grade<<endl;
+		}
 
         current=current->next;
     }
@@ -950,6 +1104,21 @@ void ResultRecord::loadFile()
         fin.ignore();
 
         fin.getline(newNode->student.enrolledCourseCode,20);
+        fin>>newNode->totalSubject;
+		fin.ignore();
+		
+		for(int i=0;i<newNode->totalSubject;i++)
+		{
+		    fin.getline(newNode->subject[i].subjectCode,20);
+		
+		    fin.getline(newNode->subject[i].subjectName,50);
+		
+		    fin>>newNode->subject[i].marks;
+		
+		    fin>>newNode->subject[i].grade;
+		
+		    fin.ignore();
+		}
 
         if(fin.fail() || strlen(newNode->student.enrolledCourseCode)==0)
         {
@@ -961,7 +1130,7 @@ void ResultRecord::loadFile()
             fin.clear();
         }
 
-        newNode->totalSubject=0;
+        
         newNode->next=NULL;
 
         if(head==NULL)
@@ -1010,9 +1179,15 @@ void ResultRecord::editRecord()
             cin.getline(current->student.course,50);
 
             cout<<"New CGPA : ";
-            cin>>current->student.cgpa;
-
-            cout<<"Record Updated Successfully"<<endl;
+			cin>>current->student.cgpa;
+			
+			if(validateCGPA(current->student.cgpa)==0)
+			{
+			    cout<<"Invalid CGPA"<<endl;
+			    return;
+			}
+			
+			cout<<"Record Updated Successfully"<<endl;
 
             break;
         }
@@ -1415,7 +1590,7 @@ void ResultRecord::binarySearch()
 
     sortRecord();
 
-    Student arr[100];
+    Student arr[500];
 
     int count=0;
 
@@ -1788,18 +1963,20 @@ void ResultRecord::topScorer()
 bool ResultRecord::updateEnrolledCourse(int id, char code[])
 {
     Node *current=head;
-
     while(current!=NULL)
     {
         if(current->student.studentID==id)
         {
+            if(strcmp(current->student.enrolledCourseCode,"NONE")!=0)
+            {
+                return false;
+            }
             strcpy(current->student.enrolledCourseCode,code);
-            return true;
+            
+           return true;
         }
-
         current=current->next;
     }
-
     return false;
 }
 
@@ -2045,14 +2222,8 @@ void ResultRecord::deleteRecord()
 
 // ============================================================
 // CourseManager Implementation
-// A second dynamic non-primitive data structure (linked list of
-// CourseNode) tracking the course catalogue. Demonstrates the same
-// Record interface used by ResultRecord but applied to a different
-// entity, and adds a second manually-implemented sorting algorithm
-// (insertion sort) distinct from the bubble sort used for students.
 // ============================================================
 
-// Add a course interactively (Admin only).
 void CourseManager::addRecord()
 {
     try
@@ -2064,7 +2235,6 @@ void CourseManager::addRecord()
         cout<<"Course Code : ";
         cin>>newNode->course.courseCode;
 
-        // Reject duplicate course codes so the catalogue stays consistent.
         if(searchRecord(newNode->course.courseCode)==true)
         {
             delete newNode;
@@ -2135,8 +2305,6 @@ void CourseManager::addRecord()
     }
 }
 
-// Overloaded addRecord: accepts a ready-made Course struct directly,
-// the same pattern used by ResultRecord::addRecord(Student s).
 void CourseManager::addRecord(Course c)
 {
     if(searchRecord(c.courseCode)==true)
@@ -2191,9 +2359,6 @@ void CourseManager::displayRecord()
     }
 }
 
-// Overloaded displayRecord: filters the course list so only courses
-// whose code contains the given substring are shown. Lets the Customer
-// module browse a narrower list instead of the entire catalogue.
 void CourseManager::displayRecord(char codeFilter[])
 {
     if(courseHead==NULL)
@@ -2263,9 +2428,6 @@ void CourseManager::searchRecord()
     }
 }
 
-// Overloaded searchRecord: returns a bool instead of printing, so it
-// can be reused internally (duplicate-check in addRecord, validity
-// check in enrollStudent) without producing console output.
 bool CourseManager::searchRecord(char code[])
 {
     CourseNode *current=courseHead;
@@ -2283,9 +2445,6 @@ bool CourseManager::searchRecord(char code[])
     return false;
 }
 
-// Insertion Sort by Credit Hours (ascending) — a second manually
-// implemented sorting algorithm distinct from the bubble sort used
-// for student records, applied here to the course linked list.
 void CourseManager::sortRecord()
 {
     if(courseHead==NULL || courseHead->next==NULL)
@@ -2350,10 +2509,28 @@ void CourseManager::editCourse()
             cin.getline(current->course.courseName,50);
 
             cout<<"New Credit Hours : ";
-            cin>>current->course.creditHours;
+			cin>>current->course.creditHours;
+			
+			if(cin.fail())
+			{
+			    cin.clear();
+			    cin.ignore(1000,'\n');
+			
+			    cout<<"Invalid Credit Hours"<<endl;
+			    return;
+			}
 
             cout<<"New Max Capacity : ";
             cin>>current->course.maxCapacity;
+            if(cin.fail() ||
+			   current->course.maxCapacity<=0)
+			{
+			    cin.clear();
+			    cin.ignore(1000,'\n');
+			
+			    cout<<"Invalid Capacity"<<endl;
+			    return;
+			}
 
             cout<<"Course Updated Successfully"<<endl;
 
@@ -2372,9 +2549,19 @@ void CourseManager::editCourse()
 void CourseManager::deleteCourse()
 {
     char code[20];
+    char confirm;
 
     cout<<"Enter Course Code to delete : ";
     cin>>code;
+
+    cout<<"Delete This Course? (Y/N) : ";
+    cin>>confirm;
+
+    if(confirm!='Y' && confirm!='y')
+    {
+        cout<<"Delete Cancelled"<<endl;
+        return;
+    }
 
     CourseNode *current=courseHead;
     CourseNode *previous=NULL;
@@ -2395,7 +2582,6 @@ void CourseManager::deleteCourse()
             delete current;
 
             cout<<"Course Deleted Successfully"<<endl;
-
             return;
         }
 
@@ -2483,12 +2669,6 @@ void CourseManager::loadCourseFile()
     fin.close();
 }
 
-// Enrolls a student into a course: validates the student exists (via
-// ResultRecord), the course exists and has capacity, then updates
-// both the course's enrolledCount and the student's enrolledCourseCode.
-// This is the link that keeps the Customer and Staff modules consistent
-// with each other -- an enrollment made by a student is immediately
-// visible to Admin through the same shared ResultRecord and courses.txt.
 bool CourseManager::enrollStudent(ResultRecord &system, int studentID, char code[])
 {
     if(searchRecord(code)==false)
@@ -2510,10 +2690,11 @@ bool CourseManager::enrollStudent(ResultRecord &system, int studentID, char code
             }
 
             if(system.updateEnrolledCourse(studentID,code)==false)
-            {
-                cout<<"Student Not Found"<<endl;
-                return false;
-            }
+		{
+		    cout<<"Student Not Found OR Already Enrolled"<<endl;
+		
+		    return false;
+		}
 
             current->course.enrolledCount++;
 
@@ -2528,9 +2709,6 @@ bool CourseManager::enrollStudent(ResultRecord &system, int studentID, char code
     return false;
 }
 
-// Shows how many students are enrolled in each course, sorted by
-// enrollment count (reuses the insertion sort above before printing,
-// so the busiest course appears first).
 void CourseManager::courseEnrollmentReport()
 {
     if(courseHead==NULL)
@@ -2566,12 +2744,106 @@ void CourseManager::courseEnrollmentReport()
     fout.close();
 }
 
+void welcomeScreen()
+{
+    clearScreen();
+
+    cout<<"===================================="<<endl;
+    cout<<" STUDENT RESULT MANAGEMENT SYSTEM "<<endl;
+    cout<<"===================================="<<endl;
+
+    cout<<endl;
+    cout<<" Welcome To Our System"<<endl;
+    cout<<endl;
+
+    cout<<"Press ENTER To Continue...";
+
+    cin.get();
+}
+
+int roleMenu()
+{
+    int choice;
+
+    clearScreen();
+
+    cout<<"\n========== SELECT ROLE =========="<<endl;
+
+    cout<<"1. Student"<<endl;
+    cout<<"2. Admin"<<endl;
+    cout<<"3. Exit"<<endl;
+
+    cout<<"Enter Choice : ";
+    cin>>choice;
+    
+    if (cin.fail()) {
+            cin.clear();
+            cin.ignore(1000, '\n');
+            choice = 0; 
+        }
+
+    return choice;
+}
+
+int studentAccessMenu()
+{
+    int choice;
+
+    clearScreen();
+
+    cout<<"\n========== STUDENT =========="<<endl;
+
+    cout<<"1. Login"<<endl;
+    cout<<"2. Register"<<endl;
+    cout<<"3. Back"<<endl;
+
+    cout<<"Enter Choice : ";
+    cin>>choice;
+    
+    if (cin.fail()) {
+            cin.clear();
+            cin.ignore(1000, '\n');
+            choice = 0; 
+        }
+
+    return choice;
+}
+
+int adminAccessMenu()
+{
+    int choice;
+
+    clearScreen();
+
+    cout<<"\n========== ADMIN =========="<<endl;
+
+    cout<<"1. Login"<<endl;
+    cout<<"2. Register"<<endl;
+    cout<<"3. Back"<<endl;
+
+    cout<<"Enter Choice : ";
+    cin>>choice;
+    
+    if (cin.fail()) {
+            cin.clear();
+            cin.ignore(1000, '\n');
+            choice = 0; 
+        }
+
+    return choice;
+}
+
+// ============================================================
+// MENUS WITH SCREEN CLEARING AND PAUSING INTEGRATION
+// ============================================================
 void adminMenu(ResultRecord &system, CourseManager &courses)
 {
     int choice;
 
     do
     {
+        clearScreen(); // 每次刷新或返回二级菜单，瞬间清除残存操作痕迹
+
         cout<<"\n========== Admin Menu =========="<<endl;
 
         cout<<"1. Add Student"<<endl;
@@ -2609,58 +2881,72 @@ void adminMenu(ResultRecord &system, CourseManager &courses)
         {
         case 1:
             system.addRecord();
+            pauseScreen(); // 运行结束，显示完毕后，交由用户看明白后按回车切掉
             break;
 
         case 2:
             system.displayRecord();
+            pauseScreen();
             break;
 
         case 3:
             system.editRecord();
+            pauseScreen();
             break;
 
         case 4:
             system.deleteRecord();
+            pauseScreen();
             break;
 
         case 5:
             system.searchRecord();
+            pauseScreen();
             break;
 
         case 6:
             system.sortRecord(1);
+            pauseScreen();
             break;
 
         case 7:
             system.sortRecord(2);
+            pauseScreen();
             break;
 
         case 8:
             system.addSubject();
+            pauseScreen();
             break;
 
         case 9:
             system.displaySubject();
+            pauseScreen();
             break;
 
         case 10:
             system.binarySearch();
+            pauseScreen();
             break;
 
         case 11:
             system.generateReport();
+            pauseScreen();
             break;
 
         case 12:
             system.searchSubject();
+            pauseScreen();
             break;
 
         case 13:
             system.sortSubject();
+            pauseScreen();
             break;
 
         case 14:
             system.loadReport();
+            pauseScreen();
             break;
 
         case 15:
@@ -2668,10 +2954,12 @@ void adminMenu(ResultRecord &system, CourseManager &courses)
             highestCGPA(system);
             lowestCGPA(system);
             averageCGPA(system);
+            pauseScreen();
             break;
 
         case 16:
             system.topScorer();
+            pauseScreen();
             break;
 
         case 17:
@@ -2682,7 +2970,7 @@ void adminMenu(ResultRecord &system, CourseManager &courses)
             cin>>reportID;
 
             system.generateReport(reportID);
-
+            pauseScreen();
             break;
         }
 
@@ -2692,6 +2980,8 @@ void adminMenu(ResultRecord &system, CourseManager &courses)
 
             do
             {
+                clearScreen(); 
+
                 cout<<"\n----- Course Management -----"<<endl;
                 cout<<"1. Add Course"<<endl;
                 cout<<"2. Display All Courses"<<endl;
@@ -2704,6 +2994,12 @@ void adminMenu(ResultRecord &system, CourseManager &courses)
 
                 cout<<"Enter Choice : ";
                 cin>>courseChoice;
+                
+                if (cin.fail()) {
+            		cin.clear();
+            		cin.ignore(1000, '\n');
+            		choice = 0; 
+        		}
 
                 if(cin.fail())
                 {
@@ -2716,30 +3012,37 @@ void adminMenu(ResultRecord &system, CourseManager &courses)
                 {
                 case 1:
                     courses.addRecord();
+                    pauseScreen();
                     break;
 
                 case 2:
                     courses.displayRecord();
+                    pauseScreen();
                     break;
 
                 case 3:
                     courses.searchRecord();
+                    pauseScreen();
                     break;
 
                 case 4:
                     courses.editCourse();
+                    pauseScreen();
                     break;
 
                 case 5:
                     courses.deleteCourse();
+                    pauseScreen();
                     break;
 
                 case 6:
                     courses.sortRecord();
+                    pauseScreen();
                     break;
 
                 case 7:
                     courses.courseEnrollmentReport();
+                    pauseScreen();
                     break;
 
                 case 8:
@@ -2748,6 +3051,7 @@ void adminMenu(ResultRecord &system, CourseManager &courses)
 
                 default:
                     cout<<"Invalid Choice"<<endl;
+                    pauseScreen();
                 }
 
             }while(courseChoice!=8);
@@ -2765,6 +3069,12 @@ void adminMenu(ResultRecord &system, CourseManager &courses)
 
             cout<<"Enter Choice : ";
             cin>>subChoice;
+            
+            if (cin.fail()) {
+            cin.clear();
+            cin.ignore(1000, '\n');
+            choice = 0; 
+        }
 
             if(subChoice==2)
             {
@@ -2774,39 +3084,58 @@ void adminMenu(ResultRecord &system, CourseManager &courses)
             {
                 system.classificationReport();
             }
-
+            pauseScreen();
             break;
         }
 
         case 20:
-            cout<<"Back to Main Menu"<<endl;
-            break;
+            {
+			    char confirm;
+			
+			    cout<<"Are you sure you want to exit? (Y/N) : ";
+			    cin>>confirm;
+			
+			    if(confirm=='Y' || confirm=='y')
+			    {
+			        choice=20;
+			    }
+			    else
+			    {
+			        choice=0;
+			    }
+			
+			    break;
+			}
 
         default:
             cout<<"Invalid Choice"<<endl;
+            pauseScreen();
         }
 
     }while(choice!=20);
 }
 
-void studentMenu(ResultRecord &system, CourseManager &courses)
+void studentMenu(StudentUser &student, ResultRecord &system, CourseManager &courses)
 {
     int choice;
 
     do
     {
+        clearScreen(); 
+
         cout<<"\n========== Student Menu =========="<<endl;
 
-        cout<<"1. Display Result"<<endl;
-        cout<<"2. Search Student"<<endl;
-        cout<<"3. Summary Report"<<endl;
-        cout<<"4. Save Summary"<<endl;
-        cout<<"5. View Saved Summary"<<endl;
-        cout<<"6. Browse Available Courses"<<endl;
-        cout<<"7. Search Course"<<endl;
-        cout<<"8. Enroll In A Course"<<endl;
-        cout<<"9. View My Enrolled Course"<<endl;
-        cout<<"10. Exit"<<endl;
+        cout<<"1. My Profile"<<endl;
+		cout<<"2. Display Result"<<endl;
+		cout<<"3. Search Student"<<endl;
+		cout<<"4. Summary Report"<<endl;
+		cout<<"5. Save Summary"<<endl;
+		cout<<"6. View Saved Summary"<<endl;
+		cout<<"7. Browse Available Courses"<<endl;
+		cout<<"8. Search Course"<<endl;
+		cout<<"9. Enroll In A Course"<<endl;
+		cout<<"10. View My Enrolled Course"<<endl;
+		cout<<"11. Exit"<<endl;
 
         cout<<"Enter Choice : ";
         cin>>choice;
@@ -2819,35 +3148,47 @@ void studentMenu(ResultRecord &system, CourseManager &courses)
 
         switch(choice)
         {
+        	
         case 1:
-            system.displayRecord();
-            break;
-
+	        student.profileMenu();
+	        break;
+	        
         case 2:
-            system.searchRecord();
+            system.displayRecord();
+            pauseScreen();
             break;
 
         case 3:
-            system.summaryReport();
+            system.searchRecord();
+            pauseScreen();
             break;
 
         case 4:
-            system.saveSummary();
+            system.summaryReport();
+            pauseScreen();
             break;
 
         case 5:
-            system.loadSummary();
+            system.saveSummary();
+            pauseScreen();
             break;
 
         case 6:
-            courses.displayRecord();
+            system.loadSummary();
+            pauseScreen();
             break;
 
         case 7:
-            courses.searchRecord();
+            courses.displayRecord();
+            pauseScreen();
             break;
 
         case 8:
+            courses.searchRecord();
+            pauseScreen();
+            break;
+
+        case 9:
         {
             int studentID;
             char courseCode[20];
@@ -2859,11 +3200,11 @@ void studentMenu(ResultRecord &system, CourseManager &courses)
             cin>>courseCode;
 
             courses.enrollStudent(system,studentID,courseCode);
-
+            pauseScreen();
             break;
         }
 
-        case 9:
+        case 10:
         {
             int studentID;
             char result[20];
@@ -2874,20 +3215,37 @@ void studentMenu(ResultRecord &system, CourseManager &courses)
             system.getEnrolledCourse(studentID,result);
 
             cout<<"Enrolled Course Code : "<<result<<endl;
-
+            pauseScreen();
             break;
         }
 
-        case 10:
-            cout<<"Back to Main Menu"<<endl;
-            break;
+        case 11:
+            {
+			    char confirm;
+			
+			    cout<<"Are you sure you want to exit? (Y/N) : ";
+			    cin>>confirm;
+			
+			    if(confirm=='Y' || confirm=='y')
+			    {
+			        choice=11;
+			    }
+			    else
+			    {
+			        choice=0;
+			    }
+			
+			    break;
+			}
 
         default:
             cout<<"Invalid Choice"<<endl;
+            pauseScreen();
         }
 
-    }while(choice!=10);
+    }while(choice!=11);
 }
+
 
 int main()
 {
@@ -2898,63 +3256,95 @@ int main()
 
     int choice;
 
+        welcomeScreen();
+
+    int roleChoice;
+
     do
     {
-        cout<<"\n=================================="<<endl;
-        cout<<"Student Result Management System"<<endl;
-        cout<<"=================================="<<endl;
+        roleChoice = roleMenu();
 
-        cout<<"1. Student Register"<<endl;
-        cout<<"2. Student Login"<<endl;
-        cout<<"3. Admin Register"<<endl;
-        cout<<"4. Admin Login"<<endl;
-        cout<<"5. Exit"<<endl;
-
-        cout<<"Enter Choice : ";
-        cin>>choice;
-
-        if (cin.fail()) {
-            cin.clear();
-            cin.ignore(1000, '\n');
-            choice = 0; 
-        }
-
-        switch(choice)
+        switch(roleChoice)
         {
-        case 1:
-            student.registerAccount();
-            break;
-
-        case 2:
-            if(student.login())
+            case 1:
             {
-                studentMenu(system,courses);
-                student.logout();
+                int studentChoice;
+
+                do
+                {
+                    studentChoice = studentAccessMenu();
+
+                    switch(studentChoice)
+                    {
+                        case 1:
+
+                            if(student.login())
+                            {
+                                studentMenu(student,system,courses);
+                                student.logout();
+                            }
+
+                            pauseScreen();
+                            break;
+
+                        case 2:
+
+                            student.registerAccount();
+                            pauseScreen();
+                            break;
+                    }
+
+                }while(studentChoice!=3);
+
+                break;
             }
-            break;
 
-        case 3:
-            admin.registerAccount();
-            break;
-
-        case 4:
-            if(admin.login())
+            case 2:
             {
-                adminMenu(system,courses);
-                admin.logout();
+                int adminChoice;
+
+                do
+                {
+                    adminChoice = adminAccessMenu();
+
+                    switch(adminChoice)
+                    {
+                        case 1:
+
+                            if(admin.login())
+                            {
+                                adminMenu(system,courses);
+                                admin.logout();
+                            }
+
+                            pauseScreen();
+                            break;
+
+                        case 2:
+
+                            admin.registerAccount();
+                            pauseScreen();
+                            break;
+                    }
+
+                }while(adminChoice!=3);
+
+                break;
             }
 
-            break;
+            case 3:
 
-        case 5:
-            cout<<"Thank You"<<endl;
-            break;
+                cout<<"Thank You"<<endl;
+                break;
 
-        default:
-            cout<<"Invalid Choice"<<endl;
+            default:
+
+                cout<<"Invalid Choice"<<endl;
+                pauseScreen();
         }
 
-    }while(choice!=5);
+    }while(roleChoice!=3);
 
     return 0;
 }
+    
