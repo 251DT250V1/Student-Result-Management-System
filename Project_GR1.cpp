@@ -1118,11 +1118,17 @@ void ResultRecord::addSubject()
 
         Node *current=head;
 
-    while(current!=NULL)
-    {
-        if(current->student.studentID==id)
+        while(current!=NULL)
         {
-            int n=current->totalSubject;
+            if(current->student.studentID==id)
+            {
+                if(current->totalSubject>=10)
+                {
+                    cout<<"Subject List Full For This Student (Max 10)"<<endl;
+                    return;
+                }
+
+                int n=current->totalSubject;
 
                 cout<<"Subject Code : ";
                 cin>>current->subject[n].subjectCode;
