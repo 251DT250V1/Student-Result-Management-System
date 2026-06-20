@@ -783,8 +783,15 @@ void ResultRecord::addSubject()
 
     while(current!=NULL)
     {
+
         if(current->student.studentID==id)
         {
+            if(current->totalSubject>=10)
+            {
+                cout<<"The student has reached the maximum number of subjects and cannot add any more."<<endl;
+                return;
+            }
+            
             int n=current->totalSubject;
 
             cout<<"Subject Code : ";
