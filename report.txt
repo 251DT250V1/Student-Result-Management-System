@@ -1,0 +1,8 @@
+===== Individual Student Report =====
+Student ID : 1231203190
+Name : LAI JIA HAO
+Course : DIT
+CGPA : 4
+
+--- Subjects ---
+25 - DATA STRUC : 80 (A)
