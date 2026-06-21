@@ -1,0 +1,500 @@
+SU001
+Muhammad Ali
+Diploma in IT
+3.85
+NONE
+1
+CS101
+Programming Fundamentals
+85
+A
+SU002
+Siti Nurhaliza
+Diploma in Computer Science
+3.92
+NONE
+1
+CS101
+Programming Fundamentals
+90
+A
+SU003
+Tan Wei Boon
+Diploma in IT
+2.45
+NONE
+1
+CS101
+Programming Fundamentals
+55
+D
+SU004
+Ramasamy Nathan
+Diploma in Information Systems
+3.10
+NONE
+1
+CS101
+Programming Fundamentals
+72
+B
+SU005
+Chong Mei Ling
+Diploma in Computer Science
+3.75
+NONE
+1
+CS101
+Programming Fundamentals
+82
+A
+SU006
+Ahmad Faiz
+Diploma in IT
+2.15
+NONE
+1
+CS101
+Programming Fundamentals
+51
+D
+SU007
+Lim Jia Hui
+Diploma in Information Systems
+3.40
+NONE
+1
+CS101
+Programming Fundamentals
+76
+B
+SU008
+Divya Rajan
+Diploma in Computer Science
+1.85
+NONE
+1
+CS101
+Programming Fundamentals
+45
+F
+SU009
+Syed Hafiz
+Diploma in IT
+3.68
+NONE
+1
+CS101
+Programming Fundamentals
+80
+A
+SU010
+Wong Kok Wai
+Diploma in Information Systems
+2.95
+NONE
+1
+CS101
+Programming Fundamentals
+63
+C
+SU011
+Nurul Izzah
+Diploma in Computer Science
+3.60
+NONE
+1
+CS102
+Data Structures
+78
+B
+SU012
+Lee Min Ho
+Diploma in IT
+2.80
+NONE
+1
+CS102
+Data Structures
+61
+C
+SU013
+Thavy Kumar
+Diploma in Information Systems
+3.25
+NONE
+1
+CS102
+Data Structures
+74
+B
+SU014
+Goh Siew Peng
+Diploma in Computer Science
+1.50
+NONE
+1
+CS102
+Data Structures
+40
+F
+SU015
+Mohd Ridzuan
+Diploma in IT
+3.05
+NONE
+1
+CS102
+Data Structures
+68
+C
+SU016
+Cheah Jin Wei
+Diploma in Information Systems
+3.55
+NONE
+1
+CS102
+Data Structures
+79
+B
+SU017
+Priya Murugan
+Diploma in Computer Science
+2.30
+NONE
+1
+CS102
+Data Structures
+53
+D
+SU018
+Zulhelmi Rosli
+Diploma in IT
+3.72
+NONE
+1
+CS102
+Data Structures
+84
+A
+SU019
+Ng Yee Wen
+Diploma in Information Systems
+3.18
+NONE
+1
+CS102
+Data Structures
+70
+B
+SU020
+Anwar Ibrahim
+Diploma in Computer Science
+2.65
+NONE
+1
+CS102
+Data Structures
+58
+C
+SU021
+Fatimah Az-Zahra
+Diploma in IT
+3.88
+NONE
+1
+CS103
+Database Systems
+88
+A
+SU022
+Teoh Beng Hock
+Diploma in Information Systems
+2.10
+NONE
+1
+CS103
+Database Systems
+50
+D
+SU023
+Shalini Devi
+Diploma in Computer Science
+3.45
+NONE
+1
+CS103
+Database Systems
+77
+B
+SU024
+Low Jian Hao
+Diploma in IT
+3.33
+NONE
+1
+CS103
+Database Systems
+75
+B
+SU025
+Khairul Amri
+Diploma in Information Systems
+2.74
+NONE
+1
+CS103
+Database Systems
+60
+C
+SU026
+Sim Hui Ting
+Diploma in Computer Science
+1.20
+NONE
+1
+CS103
+Database Systems
+35
+F
+SU027
+Kavitha Balan
+Diploma in IT
+3.52
+NONE
+1
+CS103
+Database Systems
+78
+B
+SU028
+Mohd Azlan
+Diploma in Information Systems
+2.88
+NONE
+1
+CS103
+Database Systems
+64
+C
+SU029
+Chan Pui Yee
+Diploma in Computer Science
+3.79
+NONE
+1
+CS103
+Database Systems
+83
+A
+SU030
+Vasanthi Muniandy
+Diploma in IT
+2.56
+NONE
+1
+CS103
+Database Systems
+56
+D
+SU031
+Aishah Rahman
+Diploma in Information Systems
+3.66
+NONE
+1
+CS104
+Object Oriented Programming
+81
+A
+SU032
+Ong Chee Keong
+Diploma in Computer Science
+3.02
+NONE
+1
+CS104
+Object Oriented Programming
+67
+C
+SU033
+Logeshwari Rao
+Diploma in IT
+2.22
+NONE
+1
+CS104
+Object Oriented Programming
+52
+D
+SU034
+Yap Kah Hin
+Diploma in Information Systems
+3.15
+NONE
+1
+CS104
+Object Oriented Programming
+71
+B
+SU035
+Haziq Jasmin
+Diploma in Computer Science
+3.48
+NONE
+1
+CS104
+Object Oriented Programming
+76
+B
+SU036
+Phang Siew Lan
+Diploma in IT
+1.90
+NONE
+1
+CS104
+Object Oriented Programming
+48
+F
+SU037
+Suresh Gopal
+Diploma in Information Systems
+2.99
+NONE
+1
+CS104
+Object Oriented Programming
+65
+C
+SU038
+Norashikin Arif
+Diploma in Computer Science
+3.70
+NONE
+1
+CS104
+Object Oriented Programming
+82
+A
+SU039
+Lau Jin Kai
+Diploma in IT
+3.21
+NONE
+1
+CS104
+Object Oriented Programming
+73
+B
+SU040
+Haris Iskandar
+Diploma in Information Systems
+2.48
+NONE
+1
+CS104
+Object Oriented Programming
+54
+D
+SU041
+Farah Diana
+Diploma in Computer Science
+3.95
+NONE
+1
+CS105
+Web Development
+95
+A
+SU042
+Chin Ken Ji
+Diploma in IT
+2.71
+NONE
+1
+CS105
+Web Development
+61
+C
+SU043
+Santhiran Kali
+Diploma in Information Systems
+3.36
+NONE
+1
+CS105
+Web Development
+75
+B
+SU044
+Tee Wei Wei
+Diploma in Computer Science
+3.58
+NONE
+1
+CS105
+Web Development
+79
+B
+SU045
+Mohd Shukri
+Diploma in IT
+2.38
+NONE
+1
+CS105
+Web Development
+55
+D
+SU046
+Cheong Wai Hong
+Diploma in Information Systems
+1.65
+NONE
+1
+CS105
+Web Development
+42
+F
+SU047
+Nadia Mansor
+Diploma in Computer Science
+3.12
+NONE
+1
+CS105
+Web Development
+70
+B
+SU048
+Khoo Teck Puat
+Diploma in IT
+2.85
+NONE
+1
+CS105
+Web Development
+63
+C
+SU049
+Mogan Subramaniam
+Diploma in Information Systems
+3.62
+NONE
+1
+CS105
+Web Development
+80
+A
+SU050
+Yusof Ishak
+Diploma in Computer Science
+2.60
+NONE
+1
+CS105
+Web Development
+57
+D
