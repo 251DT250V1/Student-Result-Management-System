@@ -61,16 +61,15 @@ void averageCGPA(ResultRecord&);
 // SCREEN UTILITIES FOR DEV C++ (WINDOWS)
 // ============================================================
 void clearScreen() {
-    system("cls"); // 调用 Windows 系统清屏
+    system("cls"); 
 }
 
 void pauseScreen() {
     cout << "\nPress Enter to continue...";
-    // 关键防御：防止混用 cin >> 和 cin.getline 时，残留的换行符导致“按回车继续”被跳过
     if (cin.peek() == '\n') {
         cin.ignore();
     }
-    cin.get(); // 等待用户敲击回车
+    cin.get(); 
 }
 
 class User
@@ -167,7 +166,7 @@ public:
 
     ~StudentUser()
     {
-     cout<<"Student Object Deleted"<<endl;
+     cout<<"Student Object Deleted."<<endl;
     }
 };
 
@@ -193,7 +192,7 @@ public:
 
     ~Admin()
     {
-    cout<<"Admin Object Deleted"<<endl;
+    cout<<"Admin Object Deleted."<<endl;
     }
 };
 
@@ -359,7 +358,7 @@ public:
             delete temp;
         }
 
-        cout<<"Course Memory Released"<<endl;
+        cout<<"Course Memory Released."<<endl;
     }
 };
 
@@ -464,7 +463,7 @@ void StudentUser::registerAccount()
 
         fout.open("student.txt",ios::app);
 
-        cout<<"\n===== Student Register ====="<<endl;
+        cout<<"\n===== STUDENT REGISTER ====="<<endl;
         cin.ignore();
 
         cout<<"Username : ";
@@ -483,11 +482,11 @@ void StudentUser::registerAccount()
 
         fout.close();
 
-        cout<<"Register Successfully"<<endl;
+        cout<<"Register Successfully!"<<endl;
     }
     catch(int)
     {
-        cout<<"Registration Failed: Username and Password cannot be empty"<<endl;
+        cout<<"Registration Failed: Username and Password cannot be empty."<<endl;
     }
 }
 
@@ -541,7 +540,7 @@ bool StudentUser::attemptLogin()
         }
         else
         {
-            cout<<"Wrong Username or Password"<<endl;
+            cout<<"Invalid Username or Password."<<endl;
             return false;
         }
     }
@@ -549,11 +548,11 @@ bool StudentUser::attemptLogin()
     {
         if(errorCode==2)
         {
-            cout<<"No Registered Students Found. Please Register First"<<endl;
+            cout<<"No Registered Students Found. Please Register First."<<endl;
         }
         else
         {
-            cout<<"Login Failed: Username and Password cannot be empty"<<endl;
+            cout<<"Login Failed: Username and Password cannot be empty."<<endl;
         }
 
         return false;
@@ -569,7 +568,7 @@ bool StudentUser::login()
 {
     failedAttempts=0;
 
-    cout<<"\n===== Student Login ====="<<endl;
+    cout<<"\n===== STUDENT LOGIN ====="<<endl;
     cin.ignore();
 
     while(failedAttempts<3)
@@ -720,7 +719,7 @@ void Admin::registerAccount()
 
         fout.open("admin.txt",ios::app);
 
-        cout<<"\n===== Admin Register ====="<<endl;
+        cout<<"\n===== ADMIN REGISTER ====="<<endl;
 
         cin.ignore();
         cout<<"Username : ";
@@ -739,11 +738,11 @@ void Admin::registerAccount()
 
         fout.close();
 
-        cout<<"Register Successfully"<<endl;
+        cout<<"Register Successfully!"<<endl;
     }
     catch(int)
     {
-        cout<<"Registration Failed: Username and Password cannot be empty"<<endl;
+        cout<<"Registration Failed: Username and Password cannot be empty."<<endl;
     }
 }
 
@@ -789,12 +788,12 @@ bool Admin::attemptLogin()
 
         if(found)
         {
-            cout<<"Login Successful"<<endl;
+            cout<<"Login Successful!"<<endl;
             return true;
         }
         else
         {
-            cout<<"Wrong Username or Password"<<endl;
+            cout<<"Invalid Username or Password."<<endl;
             return false;
         }
     }
@@ -802,11 +801,11 @@ bool Admin::attemptLogin()
     {
         if(errorCode==2)
         {
-            cout<<"No Registered Admin Found. Please Register First"<<endl;
+            cout<<"No Registered Admin Found. Please Register First."<<endl;
         }
         else
         {
-            cout<<"Login Failed: Username and Password cannot be empty"<<endl;
+            cout<<"Login Failed: Username and Password cannot be empty."<<endl;
         }
 
         return false;
@@ -819,7 +818,7 @@ bool Admin::login()
 {
     failedAttempts=0;
 
-    cout<<"\n===== Admin Login ====="<<endl;
+    cout<<"\n===== ADMIN LOGIN ====="<<endl;
     cin.ignore();
 
     while(failedAttempts<3)
@@ -850,7 +849,7 @@ bool Admin::login()
 // Admin Logout
 void Admin::logout()
 {
-    cout<<"Admin Logout Successfully"<<endl;
+    cout<<"Admin Logout Successfully!"<<endl;
 }
 
 void ResultRecord::addRecord()
@@ -859,7 +858,7 @@ void ResultRecord::addRecord()
     {
         Node *newNode=new Node;
 
-        cout<<"\n===== Add Student ====="<<endl;
+        cout<<"\n===== ADD STUDENT ====="<<endl;
 
         cout<<"Student ID : ";
         cin>>newNode->student.studentID;
@@ -879,7 +878,7 @@ void ResultRecord::addRecord()
 		    {
 		        delete newNode;
 		
-		        cout<<"Student ID Already Exists"<<endl;
+		        cout<<"Student ID Already Exists!"<<endl;
 		
 		        return;
 		    }
@@ -930,7 +929,7 @@ void ResultRecord::addRecord()
             current->next=newNode;
         }
 
-        cout<<"Student Added Successfully"<<endl;
+        cout<<"Student Added Successfully!"<<endl;
     }
     catch(int errorCode)
     {
@@ -982,11 +981,11 @@ void ResultRecord::displayRecord()
 
     if(head==NULL)
     {
-        cout<<"No Record Found"<<endl;
+        cout<<"No Record Found!"<<endl;
         return;
     }
 
-    cout<<"\n===== Student List ====="<<endl;
+    cout<<"\n===== STUDENT LIST  ====="<<endl;
 
     while(current!=NULL)
     {
@@ -1034,7 +1033,7 @@ void ResultRecord::displayRecord(int id)
         current=current->next;
     }
 
-    cout<<"Student Not Found"<<endl;
+    cout<<"Student Not Found!"<<endl;
 };
 
 void ResultRecord::saveFile()
@@ -1067,7 +1066,7 @@ void ResultRecord::saveFile()
 
     fout.close();
 
-    cout<<"Data Saved Successfully"<<endl;
+    cout<<"Data Saved Successfully!"<<endl;
 }
 
 void ResultRecord::loadFile()
@@ -1183,11 +1182,11 @@ void ResultRecord::editRecord()
 			
 			if(validateCGPA(current->student.cgpa)==0)
 			{
-			    cout<<"Invalid CGPA"<<endl;
+			    cout<<"Invalid CGPA!"<<endl;
 			    return;
 			}
 			
-			cout<<"Record Updated Successfully"<<endl;
+			cout<<"Record Updated Successfully!"<<endl;
 
             break;
         }
@@ -1197,7 +1196,7 @@ void ResultRecord::editRecord()
 
     if(found==false)
     {
-        cout<<"Student Not Found"<<endl;
+        cout<<"Student Not Found!"<<endl;
     }
 }
 
@@ -1246,11 +1245,11 @@ void ResultRecord::searchRecord()
         current=current->next;
     }
 
-    cout<<"Student Not Found"<<endl;
+    cout<<"Student Not Found!"<<endl;
 }
 catch(int)
     {
-        cout<<"Invalid Input"<<endl;
+        cout<<"Invalid Input!"<<endl;
 
         cin.clear();
         cin.ignore(1000,'\n');
@@ -1265,7 +1264,7 @@ void ResultRecord::searchRecord(int id)
     {
         if(current->student.studentID==id)
         {
-            cout<<"Record Found"<<endl;
+            cout<<"Record Found!"<<endl;
 
             return;
         }
@@ -1273,7 +1272,7 @@ void ResultRecord::searchRecord(int id)
         current=current->next;
     }
 
-    cout<<"Record Not Found"<<endl;
+    cout<<"Record Not Found!"<<endl;
 }
 
 // Add subject result
@@ -1348,7 +1347,7 @@ void ResultRecord::addSubject()
             current=current->next;
         }
 
-        cout<<"Student Not Found"<<endl;
+        cout<<"Student Not Found!"<<endl;
     }
     catch(int)
     {
@@ -1415,7 +1414,7 @@ void ResultRecord::displaySubject(int id)
         current=current->next;
     }
 
-    cout<<"Student Not Found"<<endl;
+    cout<<"Student Not Found!"<<endl;
 }
 
 // Overloaded sortRecord: mode 1 = sort by ID, mode 2 = sort by CGPA
@@ -1432,7 +1431,7 @@ void ResultRecord::sortRecord(int mode)
     }
     else
     {
-        cout<<"Invalid Sort Mode"<<endl;
+        cout<<"Invalid Sort Mode!"<<endl;
     }
 }
 
@@ -1442,7 +1441,7 @@ void ResultRecord::sortRecord()
 {
     if(head==NULL)
     {
-        cout<<"No Record Found"<<endl;
+        cout<<"No Record Found!"<<endl;
         return;
     }
 
@@ -1480,7 +1479,7 @@ void ResultRecord::sortRecord()
 
     }while(swap);
 
-    cout<<"Records Sorted Successfully"<<endl;
+    cout<<"Records Sorted Successfully!"<<endl;
 }
 
 // Bubble Sort by CGPA
@@ -1488,7 +1487,7 @@ void ResultRecord::sortCGPA()
 {
     if(head==NULL)
     {
-        cout<<"No Record Found"<<endl;
+        cout<<"No Record Found!"<<endl;
         return;
     }
 
@@ -1526,7 +1525,7 @@ void ResultRecord::sortCGPA()
 
     }while(swap);
 
-    cout<<"Sorted by CGPA"<<endl;
+    cout<<"Sorted by CGPA."<<endl;
 }
 
 // Show simple summary
@@ -1577,7 +1576,7 @@ void ResultRecord::saveSummary()
 
     fout.close();
 
-    cout<<"Summary Saved Successfully"<<endl;
+    cout<<"Summary Saved Successfully!"<<endl;
 }
 
 // Search student by ID using Binary Search
@@ -1656,7 +1655,7 @@ void ResultRecord::binarySearch()
 
     if(found==false)
     {
-        cout<<"Student Not Found"<<endl;
+        cout<<"Student Not Found!"<<endl;
     }
 }
 
@@ -1729,7 +1728,7 @@ void ResultRecord::generateReport()
 
     fout.close();
 
-    cout<<"Report Generated Successfully"<<endl;
+    cout<<"Report Generated Successfully!"<<endl;
 }
 
 // Overloaded generateReport: produces a focused report for a single
@@ -1766,7 +1765,7 @@ void ResultRecord::generateReport(int id)
 
             fout.close();
 
-            cout<<"Individual Report Generated Successfully"<<endl;
+            cout<<"Individual Report Generated Successfully!"<<endl;
 
             return;
         }
@@ -1774,7 +1773,7 @@ void ResultRecord::generateReport(int id)
         current=current->next;
     }
 
-    cout<<"Student Not Found"<<endl;
+    cout<<"Student Not Found!"<<endl;
 }
 
 // Read summary file
@@ -1788,11 +1787,11 @@ void ResultRecord::loadSummary()
 
     if(fin.fail())
     {
-        cout<<"Summary File Not Found"<<endl;
+        cout<<"Summary File Not Found!"<<endl;
         return;
     }
 
-    cout<<"\n===== Summary ====="<<endl;
+    cout<<"\n===== SUMMARY ====="<<endl;
 
     while(getline(fin,line))
     {
@@ -1813,11 +1812,11 @@ void ResultRecord::loadReport()
 
     if(fin.fail())
     {
-        cout<<"Report File Not Found"<<endl;
+        cout<<"Report File Not Found!"<<endl;
         return;
     }
 
-    cout<<"\n===== Report ====="<<endl;
+    cout<<"\n===== REPORT ====="<<endl;
 
     while(getline(fin,line))
     {
@@ -1843,7 +1842,7 @@ void ResultRecord::searchSubject()
         {
             if(strcmp(current->subject[i].subjectCode,code)==0)
             {
-                cout<<"\nSubject Found"<<endl;
+                cout<<"\nSubject Found!"<<endl;
 
                 cout<<"Student Name : "
                     <<current->student.name
@@ -1864,7 +1863,7 @@ void ResultRecord::searchSubject()
         current=current->next;
     }
 
-    cout<<"Subject Not Found"<<endl;
+    cout<<"Subject Not Found!"<<endl;
 }
 
 // Bubble sort subject marks
@@ -1895,7 +1894,7 @@ void ResultRecord::sortSubject()
         current=current->next;
     }
 
-    cout<<"Subject Sorted Successfully"<<endl;
+    cout<<"Subject Sorted Successfully!"<<endl;
 }
 
 // Validates that a CGPA value falls within the accepted range (0.0 - 4.0).
@@ -1930,7 +1929,7 @@ void ResultRecord::topScorer()
 {
     if(head==NULL)
     {
-        cout<<"No Record Found"<<endl;
+        cout<<"No Record Found!"<<endl;
         return;
     }
 
@@ -1947,7 +1946,7 @@ void ResultRecord::topScorer()
         current=current->next;
     }
 
-    cout<<"\n===== Top Scorer ====="<<endl;
+    cout<<"\n===== TOP SCORER ====="<<endl;
 
     cout<<"Student ID : "<<best->student.studentID<<endl;
     cout<<"Name : "<<best->student.name<<endl;
@@ -2037,13 +2036,13 @@ void ResultRecord::classificationReport()
 {
     if(head==NULL)
     {
-        cout<<"No Record Found"<<endl;
+        cout<<"No Record Found!"<<endl;
         return;
     }
 
     int countFirst=0, countUpper=0, countLower=0, countThird=0, countFail=0;
 
-    cout<<"\n===== CGPA Classification Report ====="<<endl;
+    cout<<"\n===== CGPA CLASSIFICATION REPORT ====="<<endl;
 
     Node *current=head;
 
@@ -2085,7 +2084,7 @@ void ResultRecord::classificationReport()
         current=current->next;
     }
 
-    cout<<"\n--- Summary ---"<<endl;
+    cout<<"\n--- SUMMARY ---"<<endl;
     cout<<"First Class : "<<countFirst<<endl;
     cout<<"Second Class (Upper) : "<<countUpper<<endl;
     cout<<"Second Class (Lower) : "<<countLower<<endl;
@@ -2101,7 +2100,7 @@ void ResultRecord::saveClassificationReport()
 {
     if(head==NULL)
     {
-        cout<<"No Record Found"<<endl;
+        cout<<"No Record Found!"<<endl;
         return;
     }
 
@@ -2111,7 +2110,7 @@ void ResultRecord::saveClassificationReport()
 
     int countFirst=0, countUpper=0, countLower=0, countThird=0, countFail=0;
 
-    fout<<"===== CGPA Classification Report ====="<<endl;
+    fout<<"===== CGPA CLASSIFICATION REPORT ====="<<endl;
 
     Node *current=head;
 
@@ -2153,7 +2152,7 @@ void ResultRecord::saveClassificationReport()
         current=current->next;
     }
 
-    fout<<"\n--- Summary ---"<<endl;
+    fout<<"\n--- SUMMARY ---"<<endl;
     fout<<"First Class : "<<countFirst<<endl;
     fout<<"Second Class (Upper) : "<<countUpper<<endl;
     fout<<"Second Class (Lower) : "<<countLower<<endl;
@@ -2162,7 +2161,7 @@ void ResultRecord::saveClassificationReport()
 
     fout.close();
 
-    cout<<"Classification Report Saved Successfully"<<endl;
+    cout<<"Classification report saved successfully."<<endl;
 }
 
 // Delete student record
@@ -2198,7 +2197,7 @@ void ResultRecord::deleteRecord()
 
                 delete current;
 
-                cout<<"Record Deleted"<<endl;
+                cout<<"Record Deleted!"<<endl;
 
                 return;
             }
@@ -2207,12 +2206,12 @@ void ResultRecord::deleteRecord()
             current=current->next;
         }
 
-        cout<<"Student Not Found"<<endl;
+        cout<<"Student not found!"<<endl;
     }
 
     catch(int)
     {
-        cout<<"Invalid Input"<<endl;
+        cout<<"Invalid input!"<<endl;
 
         cin.clear();
 
@@ -2230,7 +2229,7 @@ void CourseManager::addRecord()
     {
         CourseNode *newNode=new CourseNode;
 
-        cout<<"\n===== Add Course ====="<<endl;
+        cout<<"\n===== ADD COURSE ====="<<endl;
 
         cout<<"Course Code : ";
         cin>>newNode->course.courseCode;
@@ -2283,7 +2282,7 @@ void CourseManager::addRecord()
             current->next=newNode;
         }
 
-        cout<<"Course Added Successfully"<<endl;
+        cout<<"Course Added Successfully!"<<endl;
     }
     catch(int errorCode)
     {
@@ -2292,15 +2291,15 @@ void CourseManager::addRecord()
 
         if(errorCode==2)
         {
-            cout<<"Invalid Capacity. Must be a positive number"<<endl;
+            cout<<"Invalid Capacity! Must be a positive number."<<endl;
         }
         else if(errorCode==3)
         {
-            cout<<"Course Code Already Exists"<<endl;
+            cout<<"Course Code Already Exists!"<<endl;
         }
         else
         {
-            cout<<"Invalid Input"<<endl;
+            cout<<"Invalid Input!"<<endl;
         }
     }
 }
@@ -2338,11 +2337,11 @@ void CourseManager::displayRecord()
 {
     if(courseHead==NULL)
     {
-        cout<<"No Course Found"<<endl;
+        cout<<"No Course Found!"<<endl;
         return;
     }
 
-    cout<<"\n===== Course List ====="<<endl;
+    cout<<"\n===== COURSE LIST ====="<<endl;
 
     CourseNode *current=courseHead;
 
@@ -2363,7 +2362,7 @@ void CourseManager::displayRecord(char codeFilter[])
 {
     if(courseHead==NULL)
     {
-        cout<<"No Course Found"<<endl;
+        cout<<"No Course Found!"<<endl;
         return;
     }
 
@@ -2371,7 +2370,7 @@ void CourseManager::displayRecord(char codeFilter[])
 
     CourseNode *current=courseHead;
 
-    cout<<"\n===== Filtered Course List ====="<<endl;
+    cout<<"\n===== FILTERED COURSE LIST ====="<<endl;
 
     while(current!=NULL)
     {
@@ -2392,7 +2391,7 @@ void CourseManager::displayRecord(char codeFilter[])
 
     if(any==false)
     {
-        cout<<"No Matching Course Found"<<endl;
+        cout<<"No Matching Course Found!"<<endl;
     }
 }
 
@@ -2411,7 +2410,7 @@ void CourseManager::searchRecord()
         {
             if(strcmp(current->course.courseCode,code)==0)
             {
-                cout<<"\nCourse Found"<<endl;
+                cout<<"\nCourse Found!"<<endl;
                 cout<<"Course Name : "<<current->course.courseName<<endl;
                 cout<<"Credit Hours : "<<current->course.creditHours<<endl;
                 cout<<"Enrolled : "<<current->course.enrolledCount
@@ -2424,7 +2423,7 @@ void CourseManager::searchRecord()
     }
     else
     {
-        cout<<"Course Not Found"<<endl;
+        cout<<"Course not found!"<<endl;
     }
 }
 
@@ -2484,7 +2483,7 @@ void CourseManager::sortRecord()
 
     courseHead=sorted;
 
-    cout<<"Courses Sorted By Credit Hours Successfully"<<endl;
+    cout<<"Courses Sorted By Credit Hours Successfully!"<<endl;
 }
 
 void CourseManager::editCourse()
@@ -2532,7 +2531,7 @@ void CourseManager::editCourse()
 			    return;
 			}
 
-            cout<<"Course Updated Successfully"<<endl;
+            cout<<"Course Updated Successfully!"<<endl;
 
             break;
         }
@@ -2542,7 +2541,7 @@ void CourseManager::editCourse()
 
     if(found==false)
     {
-        cout<<"Course Not Found"<<endl;
+        cout<<"Course Not Found!"<<endl;
     }
 }
 
@@ -2581,7 +2580,7 @@ void CourseManager::deleteCourse()
 
             delete current;
 
-            cout<<"Course Deleted Successfully"<<endl;
+            cout<<"Course Deleted Successfully!"<<endl;
             return;
         }
 
@@ -2589,7 +2588,7 @@ void CourseManager::deleteCourse()
         current=current->next;
     }
 
-    cout<<"Course Not Found"<<endl;
+    cout<<"Course not found!"<<endl;
 }
 
 void CourseManager::saveCourseFile()
@@ -2613,7 +2612,7 @@ void CourseManager::saveCourseFile()
 
     fout.close();
 
-    cout<<"Course Data Saved Successfully"<<endl;
+    cout<<"Course data saved successfully!"<<endl;
 }
 
 void CourseManager::loadCourseFile()
@@ -2673,7 +2672,7 @@ bool CourseManager::enrollStudent(ResultRecord &system, int studentID, char code
 {
     if(searchRecord(code)==false)
     {
-        cout<<"Course Not Found"<<endl;
+        cout<<"Course Not Found!"<<endl;
         return false;
     }
 
@@ -2685,13 +2684,13 @@ bool CourseManager::enrollStudent(ResultRecord &system, int studentID, char code
         {
             if(current->course.enrolledCount>=current->course.maxCapacity)
             {
-                cout<<"Course Is Full"<<endl;
+                cout<<"Course Is Full!"<<endl;
                 return false;
             }
 
             if(system.updateEnrolledCourse(studentID,code)==false)
 		{
-		    cout<<"Student Not Found OR Already Enrolled"<<endl;
+		    cout<<"Student Not Found OR Already Enrolled!"<<endl;
 		
 		    return false;
 		}
@@ -2713,7 +2712,7 @@ void CourseManager::courseEnrollmentReport()
 {
     if(courseHead==NULL)
     {
-        cout<<"No Course Found"<<endl;
+        cout<<"No Course Found!"<<endl;
         return;
     }
 
@@ -2723,8 +2722,8 @@ void CourseManager::courseEnrollmentReport()
 
     fout.open("course_report.txt");
 
-    cout<<"\n===== Course Enrollment Report ====="<<endl;
-    fout<<"===== Course Enrollment Report ====="<<endl;
+    cout<<"\n===== COURSE ENROLLMENT REPORT ====="<<endl;
+    fout<<"===== COURSE ENROLLMENT REPORT ====="<<endl;
 
     CourseNode *current=courseHead;
 
@@ -2748,15 +2747,18 @@ void welcomeScreen()
 {
     clearScreen();
 
-    cout<<"===================================="<<endl;
-    cout<<" STUDENT RESULT MANAGEMENT SYSTEM "<<endl;
-    cout<<"===================================="<<endl;
+    cout << "\n";
+    cout << "==================================================================" << endl;
+    cout << " *								                                   " << endl;
+    cout << " * *	WELCOME TO STUDENT RESULT MANAGEMENT SYSTEM   	           " << endl;
+    cout << " * * *                          				                   " << endl;
+    cout << " * * * *                                        		           " << endl;
+    cout << "==================================================================" << endl;
+    cout << "\n"; 
+    cout << "                    [ Press ENTER to Launch ]                    " << endl;
+    cout << "\n";
+    cout << "==================================================================" << endl;
 
-    cout<<endl;
-    cout<<" Welcome To Our System"<<endl;
-    cout<<endl;
-
-    cout<<"Press ENTER To Continue...";
 
     cin.get();
 }
@@ -2842,9 +2844,9 @@ void adminMenu(ResultRecord &system, CourseManager &courses)
 
     do
     {
-        clearScreen(); // 每次刷新或返回二级菜单，瞬间清除残存操作痕迹
+        clearScreen(); 
 
-        cout<<"\n========== Admin Menu =========="<<endl;
+        cout<<"\n========== ADMIN MENU =========="<<endl;
 
         cout<<"1. Add Student"<<endl;
         cout<<"2. Display Student"<<endl;
@@ -2881,7 +2883,7 @@ void adminMenu(ResultRecord &system, CourseManager &courses)
         {
         case 1:
             system.addRecord();
-            pauseScreen(); // 运行结束，显示完毕后，交由用户看明白后按回车切掉
+            pauseScreen(); 
             break;
 
         case 2:
@@ -2982,7 +2984,7 @@ void adminMenu(ResultRecord &system, CourseManager &courses)
             {
                 clearScreen(); 
 
-                cout<<"\n----- Course Management -----"<<endl;
+                cout<<"\n----- COURSE MANAGEMENT -----"<<endl;
                 cout<<"1. Add Course"<<endl;
                 cout<<"2. Display All Courses"<<endl;
                 cout<<"3. Search Course"<<endl;
@@ -3050,7 +3052,7 @@ void adminMenu(ResultRecord &system, CourseManager &courses)
                     break;
 
                 default:
-                    cout<<"Invalid Choice"<<endl;
+                    cout<<"Invalid Choice!"<<endl;
                     pauseScreen();
                 }
 
@@ -3063,7 +3065,7 @@ void adminMenu(ResultRecord &system, CourseManager &courses)
         {
             int subChoice;
 
-            cout<<"\n----- CGPA Classification -----"<<endl;
+            cout<<"\n----- CGPA CLASSIFICATION -----"<<endl;
             cout<<"1. View On Screen"<<endl;
             cout<<"2. Save To File"<<endl;
 
@@ -3108,7 +3110,7 @@ void adminMenu(ResultRecord &system, CourseManager &courses)
 			}
 
         default:
-            cout<<"Invalid Choice"<<endl;
+            cout<<"Invalid Choice!"<<endl;
             pauseScreen();
         }
 
@@ -3123,7 +3125,7 @@ void studentMenu(StudentUser &student, ResultRecord &system, CourseManager &cour
     {
         clearScreen(); 
 
-        cout<<"\n========== Student Menu =========="<<endl;
+        cout<<"\n========== STUDENT MENU =========="<<endl;
 
         cout<<"1. My Profile"<<endl;
 		cout<<"2. Display Result"<<endl;
@@ -3239,7 +3241,7 @@ void studentMenu(StudentUser &student, ResultRecord &system, CourseManager &cour
 			}
 
         default:
-            cout<<"Invalid Choice"<<endl;
+            cout<<"Invalid Choice!"<<endl;
             pauseScreen();
         }
 
@@ -3339,7 +3341,7 @@ int main()
 
             default:
 
-                cout<<"Invalid Choice"<<endl;
+                cout<<"Invalid Choice!"<<endl;
                 pauseScreen();
         }
 
