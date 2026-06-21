@@ -572,29 +572,17 @@ bool StudentUser::attemptLogin()
 // them out for this session.
 bool StudentUser::login()
 {
-    failedAttempts=0;
-
     cout<<"\n===== STUDENT LOGIN ====="<<endl;
     cin.ignore(1000,'\n');
 
-    while(failedAttempts<3)
+    while(1)
     {
         if(attemptLogin())
         {
             return true;
         }
-
-        failedAttempts++;
-
-        if(failedAttempts<3)
-        {
-            cout<<"Attempt "<<failedAttempts<<" of 3 failed. Try again."<<endl;
-        }
+        cout << "Login failed. Please try again." << endl;
     }
-
-    cout<<"Too Many Failed Attempts. Account Locked For This Session."<<endl;
-
-    return false;
 }
 
 // Student Logout
@@ -817,32 +805,20 @@ bool Admin::attemptLogin()
     }
 }
 
-// Public login: same 3-attempt lockout policy as StudentUser::login.
+
 bool Admin::login()
 {
-    failedAttempts=0;
-
     cout<<"\n===== ADMIN LOGIN ====="<<endl;
     cin.ignore(1000,'\n');
 
-    while(failedAttempts<3)
+    while(1)
     {
         if(attemptLogin())
         {
             return true;
         }
-
-        failedAttempts++;
-
-        if(failedAttempts<3)
-        {
-            cout<<"Attempt "<<failedAttempts<<" of 3 failed. Try again."<<endl;
-        }
+        cout << "Login failed. Please try again." << endl;
     }
-
-    cout<<"Too Many Failed Attempts. Account Locked For This Session."<<endl;
-
-    return false;
 }
 
 // Admin Logout
@@ -1005,27 +981,13 @@ void ResultRecord::displayRecord()
         return;
     }
 
-    cout<<"\n===== STUDENT LIST  ====="<<endl;
+    cout<<"\n================ STUDENT LIST ================\n";
+    cout<<left<<setw(15)<<"ID"<<setw(25)<<"Name"<<setw(35)<<"Course"<<setw(10)<<"CGPA"<<endl;
+    cout<<"--------------------------------------------------------------------------"<<endl;
 
     while(current!=NULL)
     {
-        cout<<"Student ID : "
-            <<current->student.studentID
-            <<endl;
-
-        cout<<"Name : "
-            <<current->student.name
-            <<endl;
-
-        cout<<"Course : "
-            <<current->student.course
-            <<endl;
-
-        cout<<"CGPA : "
-            <<current->student.cgpa
-            <<endl;
-
-        cout<<"---------------------"<<endl;
+        cout<<left<<setw(12)<<current->student.studentID<<setw(25)<<current->student.name<<setw(35)<<current->student.course<<setw(10)<<fixed<<setprecision(2)<<current->student.cgpa<<endl;
 
         current=current->next;
     }
@@ -1259,36 +1221,24 @@ void ResultRecord::searchRecord()
         {
             if(strcmp(current->student.studentID,id)==0)
             {
-                cout<<"\nStudent Found"<<endl;
+                cout<<"\n========================================"<<endl;
+                cout<<"            STUDENT FOUND"<<endl;
+                cout<<"========================================"<<endl;
 
-                cout<<"ID : "
-                    <<current->student.studentID
-                    <<endl;
-
-                cout<<"Name : "
-                    <<current->student.name
-                    <<endl;
-
-                cout<<"Course : "
-                    <<current->student.course
-                    <<endl;
-
-                cout<<"CGPA : "
-                    <<current->student.cgpa
-                    <<endl;
-
+                cout<<left<<setw(15)<<"Student ID"<<": "<<current->student.studentID<<endl;
+                cout<<left<<setw(15)<<"Name"<<": "<<current->student.name<<endl;
+                cout<<left<<setw(15)<<"Course"<<": "<<current->student.course<<endl;
+                cout<<left<<setw(15)<<"CGPA"<<": "<<fixed<<setprecision(2)<<current->student.cgpa<<endl;
+                cout<<"========================================"<<endl;
                 return;
             }
-
             current=current->next;
         }
-
         cout<<"Student Not Found!"<<endl;
     }
     catch(int)
     {
         cout<<"Invalid Input!"<<endl;
-
         cin.clear();
         cin.ignore(1000,'\n');
     }
@@ -1408,46 +1358,37 @@ void ResultRecord::displaySubject()
 
 void ResultRecord::displaySubject(char id[])
 {
-    Node *current = head;
+    Node *current=head;
 
-    while(current != NULL)
+    while(current!=NULL)
     {
-        if(strcmp(current->student.studentID, id) == 0)
+        if(strcmp(current->student.studentID,id)==0)
         {
-            cout << "\n========================================================" << endl;
-            cout << "STUDENT NAME : " << current->student.name << endl;
-            cout << "STUDENT ID   : " << current->student.studentID << endl;
-            cout << "========================================================" << endl;
-
-            if(current->totalSubject == 0)
+            cout<<"\n============================================================"<<endl;
+            cout<<"                 STUDENT SUBJECT RECORD"<<endl;
+            cout<<"============================================================"<<endl;
+            cout<<"Student ID : "<<current->student.studentID<<endl;
+            cout<<"Name       : "<<current->student.name<<endl;
+            cout<<"\n------------------------------------------------------------"<<endl;
+            if(current->totalSubject==0)
             {
-                cout << "No subject records found for this student." << endl;
-                cout << "========================================================" << endl;
+                cout<<"No Subject Records Found!"<<endl;
                 return;
             }
 
-            // Loops through each subject and displays it vertically with front labels
-            for(int i = 0; i < current->totalSubject; i++)
-            {
-                cout << "[ Subject Entry #" << (i + 1) << " ]" << endl;
-                
-                // Using left and setw(16) to make sure all the ':' colon alignment looks perfect
-                cout << left << setw(16) << "Subject Code" << ": " << current->subject[i].subjectCode << endl;
-                cout << left << setw(16) << "Subject Name" << ": " << current->subject[i].subjectName << endl;
-                cout << left << setw(16) << "Marks"        << ": " << current->subject[i].marks << endl;
-                cout << left << setw(16) << "Grade"        << ": " << current->subject[i].grade << endl;
-                
-                cout << "--------------------------------------------------------" << endl;
-            }
-            cout << "========================================================" << endl;
+            cout<<left<<setw(15)<<"Code"<<setw(30)<<"Subject"<<setw(10)<<"Marks"<<setw(10)<<"Grade"<<endl;
+            cout<<"------------------------------------------------------------"<<endl;
 
+            for(int i=0;i<current->totalSubject;i++)
+            {
+                cout<<left<<setw(15)<<current->subject[i].subjectCode<<setw(30)<<current->subject[i].subjectName<<setw(10)<<current->subject[i].marks<<setw(10)<<current->subject[i].grade<<endl;
+            }
+            cout<<"------------------------------------------------------------"<<endl;
             return;
         }
-
-        current = current->next;
+        current=current->next;
     }
-
-    cout << "Student Not Found!" << endl;
+    cout<<"Student Not Found!"<<endl;
 }
 
 // Overloaded sortRecord: mode 1 = sort by ID, mode 2 = sort by CGPA
@@ -1585,23 +1526,18 @@ void ResultRecord::sortCGPA()
 void ResultRecord::summaryReport()
 {
     Node *current=head;
-
     int total=0;
-
     while(current!=NULL)
     {
         total++;
 
         current=current->next;
     }
-
-    cout<<endl;
-
-    cout<<"===== Summary Report ====="<<endl;
-
-    cout<<"Total Students : "
-        <<total
-        <<endl;
+    cout<<"\n===================================="<<endl;
+    cout<<"         SUMMARY REPORT"<<endl;
+    cout<<"===================================="<<endl;
+    cout<<left<<setw(25)<<"Total Students"<<total<<endl;
+    cout<<"===================================="<<endl;
 }
 
 void ResultRecord::saveSummary()
@@ -2222,21 +2158,21 @@ void CourseManager::displayRecord()
         return;
     }
 
-    cout<<"\n===== COURSE LIST ====="<<endl;
+    cout<<"\n==================== COURSE LIST ====================\n";
 
+    cout<<left <<setw(15)<<"Code" <<setw(30)<<"Course Name" <<setw(15)<<"Credit" <<setw(15)<<"Enrolled" <<endl;
+    cout<<"--------------------------------------------------------------"<<endl;
     CourseNode *current=courseHead;
 
     while(current!=NULL)
     {
-        cout<<"Course Code : "<<current->course.courseCode<<endl;
-        cout<<"Course Name : "<<current->course.courseName<<endl;
-        cout<<"Credit Hours : "<<current->course.creditHours<<endl;
-        cout<<"Enrolled : "<<current->course.enrolledCount
-            <<" / "<<current->course.maxCapacity<<endl;
-        cout<<"---------------------"<<endl;
+        cout<<left<<setw(15)<<current->course.courseCode<<setw(30)<<current->course.courseName<<setw(15)<<current->course.creditHours;
 
+        cout<<current->course.enrolledCount<<"/"<<current->course.maxCapacity<<endl;
+            
         current=current->next;
     }
+    cout<<"--------------------------------------------------------------"<<endl;
 }
 
 void CourseManager::displayRecord(char codeFilter[])
