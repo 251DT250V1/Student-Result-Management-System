@@ -1,0 +1,50 @@
+CSC101
+Diploma in Computer Science
+90
+40
+4
+ITC102
+Bachelor of Information Technology
+120
+35
+4
+BUS103
+Diploma in Business Administration
+90
+45
+4
+SWE104
+Bachelor of Software Engineering
+120
+30
+8
+ACC105
+Diploma in Accounting
+90
+40
+3
+EEE106
+Bachelor of Electrical Engineering
+120
+30
+3
+MEC107
+Diploma in Mechanical Engineering
+90
+35
+5
+CIV108
+Bachelor of Civil Engineering
+120
+30
+2
+MMD109
+Diploma in Multimedia Design
+90
+35
+10
+DSC110
+Bachelor of Data Science
+120
+30
+5
