@@ -33,8 +33,6 @@ struct Node
     Node *next;
 };
 
-// Course Management: a separate dynamic non-primitive (linked list)
-// data structure storing the catalogue of courses students can enroll in.
 struct Course
 {
     char courseCode[20];
@@ -224,9 +222,13 @@ public:
 
     void addSubject();
 
+    void editSubject(char id[]);
+
     void displaySubject();
 
     void displaySubject(char id[]);
+
+    void displayAllSubject();
 
     void saveFile();
 
@@ -240,11 +242,15 @@ public:
 
     void generateReport();
 
+    void generateReport(char id[]);
+
     void loadSummary();
 
     void loadReport();
 
     void deleteSubject(char id[]);
+
+    void topScorer();
 
     int validateCGPA(float c);
 
@@ -280,9 +286,6 @@ public:
 }
 };
 
-// Forward declaration so ResultRecord can be referenced inside
-// CourseManager's enrollCourse() (it needs to look up a student
-// record to confirm the student exists before enrolling them).
 class CourseManager : public Record
 {
 private:
@@ -473,13 +476,6 @@ void StudentUser::registerAccount(ResultRecord &system)
 
         fout.close();
 
-        // A registered login account on its own has no academic record
-        // yet (academic records live in ResultRecord, normally managed
-        // by Admin). Create a basic placeholder record here, using the
-        // ID just registered, so the student isn't stuck seeing "Not
-        // Found" on Display/Search/Sort/Delete until an admin separately
-        // adds a matching record. Admin can still edit name/course/CGPA
-        // later through Edit Student.
         Student s;
 
         strcpy(s.studentID, currentStudentID);
@@ -498,10 +494,6 @@ void StudentUser::registerAccount(ResultRecord &system)
     }
 }
 
-// Student Login
-// Single login attempt: prompts once, checks credentials against
-// student.txt, and reports success/failure. Returns true on success.
-// Throws 2 if no student.txt exists yet, 1 if input was empty.
 bool StudentUser::attemptLogin()
 {
     try
@@ -568,24 +560,33 @@ bool StudentUser::attemptLogin()
     }
 }
 
-// Public login: gives the student up to 3 attempts before locking
-// them out for this session.
 bool StudentUser::login()
 {
+    failedAttempts=0;
+
     cout<<"\n===== STUDENT LOGIN ====="<<endl;
     cin.ignore(1000,'\n');
 
-    while(1)
+    while(failedAttempts<3)
     {
         if(attemptLogin())
         {
             return true;
         }
-        cout << "Login failed. Please try again." << endl;
+
+        failedAttempts++;
+
+        if(failedAttempts<3)
+        {
+            cout<<"Attempt "<<failedAttempts<<" of 3 failed. Try again."<<endl;
+        }
     }
+
+    cout<<"Too Many Failed Attempts. Account Locked For This Session."<<endl;
+
+    return false;
 }
 
-// Student Logout
 void StudentUser::logout()
 {
     cout<<"Student Logout Successfully"<<endl;
@@ -704,7 +705,6 @@ void StudentUser::profileMenu()
     }while(choice!=3);
 }
 
-// Admin Register
 void Admin::registerAccount()
 {
     try
@@ -740,8 +740,6 @@ void Admin::registerAccount()
     }
 }
 
-// Admin Login
-// Single login attempt for Admin, same pattern as StudentUser::attemptLogin.
 bool Admin::attemptLogin()
 {
     try
@@ -805,23 +803,33 @@ bool Admin::attemptLogin()
     }
 }
 
-
 bool Admin::login()
 {
+    failedAttempts=0;
+
     cout<<"\n===== ADMIN LOGIN ====="<<endl;
     cin.ignore(1000,'\n');
 
-    while(1)
+    while(failedAttempts<3)
     {
         if(attemptLogin())
         {
             return true;
         }
-        cout << "Login failed. Please try again." << endl;
+
+        failedAttempts++;
+
+        if(failedAttempts<3)
+        {
+            cout<<"Attempt "<<failedAttempts<<" of 3 failed. Try again."<<endl;
+        }
     }
+
+    cout<<"Too Many Failed Attempts. Account Locked For This Session."<<endl;
+
+    return false;
 }
 
-// Admin Logout
 void Admin::logout()
 {
     cout<<"Admin Logout Successfully!"<<endl;
@@ -929,9 +937,6 @@ void ResultRecord::addRecord()
     }
 }
 
-// Overloaded addRecord: accepts a ready-made Student struct directly
-// instead of asking for keyboard input. Used internally by loadSampleData()
-// and by any future feature that needs to insert a record programmatically.
 void ResultRecord::addRecord(Student s)
 {
     Node *check=head;
@@ -940,8 +945,6 @@ void ResultRecord::addRecord(Student s)
     {
         if(strcmp(check->student.studentID, s.studentID)==0)
         {
-            // Already exists (e.g. admin already added this student) -
-            // don't create a duplicate record.
             return;
         }
 
@@ -981,13 +984,27 @@ void ResultRecord::displayRecord()
         return;
     }
 
-    cout<<"\n================ STUDENT LIST ================\n";
-    cout<<left<<setw(15)<<"ID"<<setw(25)<<"Name"<<setw(35)<<"Course"<<setw(10)<<"CGPA"<<endl;
-    cout<<"--------------------------------------------------------------------------"<<endl;
+    cout<<"\n===== STUDENT LIST  ====="<<endl;
 
     while(current!=NULL)
     {
-        cout<<left<<setw(12)<<current->student.studentID<<setw(25)<<current->student.name<<setw(35)<<current->student.course<<setw(10)<<fixed<<setprecision(2)<<current->student.cgpa<<endl;
+        cout<<"Student ID : "
+            <<current->student.studentID
+            <<endl;
+
+        cout<<"Name : "
+            <<current->student.name
+            <<endl;
+
+        cout<<"Course : "
+            <<current->student.course
+            <<endl;
+
+        cout<<"CGPA : "
+            <<current->student.cgpa
+            <<endl;
+
+        cout<<"---------------------"<<endl;
 
         current=current->next;
     }
@@ -1103,10 +1120,6 @@ void ResultRecord::loadFile()
 
         if(fin.fail() || strlen(newNode->student.enrolledCourseCode)==0)
         {
-            // Older result.txt files (saved before the Course module
-            // existed) won't have this line, or end-of-file was reached
-            // right after CGPA. Default to "NONE" instead of discarding
-            // the whole record.
             strcpy(newNode->student.enrolledCourseCode,"NONE");
             fin.clear();
         }
@@ -1134,7 +1147,6 @@ void ResultRecord::loadFile()
     fin.close();
 }
 
-// Edit student information
 void ResultRecord::editRecord()
 {
     char id[20];
@@ -1221,24 +1233,36 @@ void ResultRecord::searchRecord()
         {
             if(strcmp(current->student.studentID,id)==0)
             {
-                cout<<"\n========================================"<<endl;
-                cout<<"            STUDENT FOUND"<<endl;
-                cout<<"========================================"<<endl;
+                cout<<"\nStudent Found"<<endl;
 
-                cout<<left<<setw(15)<<"Student ID"<<": "<<current->student.studentID<<endl;
-                cout<<left<<setw(15)<<"Name"<<": "<<current->student.name<<endl;
-                cout<<left<<setw(15)<<"Course"<<": "<<current->student.course<<endl;
-                cout<<left<<setw(15)<<"CGPA"<<": "<<fixed<<setprecision(2)<<current->student.cgpa<<endl;
-                cout<<"========================================"<<endl;
+                cout<<"ID : "
+                    <<current->student.studentID
+                    <<endl;
+
+                cout<<"Name : "
+                    <<current->student.name
+                    <<endl;
+
+                cout<<"Course : "
+                    <<current->student.course
+                    <<endl;
+
+                cout<<"CGPA : "
+                    <<current->student.cgpa
+                    <<endl;
+
                 return;
             }
+
             current=current->next;
         }
+
         cout<<"Student Not Found!"<<endl;
     }
     catch(int)
     {
         cout<<"Invalid Input!"<<endl;
+
         cin.clear();
         cin.ignore(1000,'\n');
     }
@@ -1263,7 +1287,6 @@ void ResultRecord::searchRecord(char id[])
     cout<<"Record Not Found!"<<endl;
 }
 
-// Add subject result
 void ResultRecord::addSubject()
 {
     try
@@ -1313,7 +1336,6 @@ void ResultRecord::addSubject()
                     return;
                 }
 
-                // simple grading
                 if(current->subject[n].marks>=80)
                     current->subject[n].grade='A';
                 else if(current->subject[n].marks>=70)
@@ -1346,6 +1368,84 @@ void ResultRecord::addSubject()
     }
 }
 
+// Lets Admin edit an existing subject entry's name/marks for a given
+// student (correct typos or wrong marks entered via Add Subject).
+// Grade is recalculated from the new marks, same rule as addSubject().
+void ResultRecord::editSubject(char id[])
+{
+    Node *current=head;
+
+    while(current!=NULL)
+    {
+        if(strcmp(current->student.studentID,id)==0)
+        {
+            if(current->totalSubject==0)
+            {
+                cout<<"No Subject Record Found For This Student!"<<endl;
+                return;
+            }
+
+            char code[20];
+
+            cout<<"Enter Subject Code To Edit : ";
+            cin>>code;
+
+            int index=-1;
+
+            for(int i=0;i<current->totalSubject;i++)
+            {
+                if(strcmp(current->subject[i].subjectCode,code)==0)
+                {
+                    index=i;
+                    break;
+                }
+            }
+
+            if(index==-1)
+            {
+                cout<<"Subject Not Found!"<<endl;
+                return;
+            }
+
+            cin.ignore(1000,'\n');
+
+            cout<<"New Subject Name : ";
+            cin.getline(current->subject[index].subjectName,50);
+
+            cout<<"New Marks : ";
+            cin>>current->subject[index].marks;
+
+            if(cin.fail() || validateMarks(current->subject[index].marks)==0)
+            {
+                cin.clear();
+                cin.ignore(1000,'\n');
+
+                cout<<"Invalid Marks!"<<endl;
+                return;
+            }
+
+            if(current->subject[index].marks>=80)
+                current->subject[index].grade='A';
+            else if(current->subject[index].marks>=70)
+                current->subject[index].grade='B';
+            else if(current->subject[index].marks>=60)
+                current->subject[index].grade='C';
+            else if(current->subject[index].marks>=50)
+                current->subject[index].grade='D';
+            else
+                current->subject[index].grade='F';
+
+            cout<<"Subject Updated Successfully!"<<endl;
+
+            return;
+        }
+
+        current=current->next;
+    }
+
+    cout<<"Student Not Found!"<<endl;
+}
+
 void ResultRecord::displaySubject()
 {
     char id[20];
@@ -1358,40 +1458,92 @@ void ResultRecord::displaySubject()
 
 void ResultRecord::displaySubject(char id[])
 {
-    Node *current=head;
+    Node *current = head;
 
-    while(current!=NULL)
+    while(current != NULL)
     {
-        if(strcmp(current->student.studentID,id)==0)
+        if(strcmp(current->student.studentID, id) == 0)
         {
-            cout<<"\n============================================================"<<endl;
-            cout<<"                 STUDENT SUBJECT RECORD"<<endl;
-            cout<<"============================================================"<<endl;
-            cout<<"Student ID : "<<current->student.studentID<<endl;
-            cout<<"Name       : "<<current->student.name<<endl;
-            cout<<"\n------------------------------------------------------------"<<endl;
-            if(current->totalSubject==0)
+            cout << "\n========================================================" << endl;
+            cout << "STUDENT NAME : " << current->student.name << endl;
+            cout << "STUDENT ID   : " << current->student.studentID << endl;
+            cout << "========================================================" << endl;
+
+            if(current->totalSubject == 0)
             {
-                cout<<"No Subject Records Found!"<<endl;
+                cout << "No subject records found for this student." << endl;
+                cout << "========================================================" << endl;
                 return;
             }
 
-            cout<<left<<setw(15)<<"Code"<<setw(30)<<"Subject"<<setw(10)<<"Marks"<<setw(10)<<"Grade"<<endl;
-            cout<<"------------------------------------------------------------"<<endl;
+            for(int i = 0; i < current->totalSubject; i++)
+            {
+                cout << "[ Subject Entry #" << (i + 1) << " ]" << endl;
+                
+                cout << left << setw(16) << "Subject Code" << ": " << current->subject[i].subjectCode << endl;
+                cout << left << setw(16) << "Subject Name" << ": " << current->subject[i].subjectName << endl;
+                cout << left << setw(16) << "Marks"        << ": " << current->subject[i].marks << endl;
+                cout << left << setw(16) << "Grade"        << ": " << current->subject[i].grade << endl;
+                
+                cout << "--------------------------------------------------------" << endl;
+            }
+            cout << "========================================================" << endl;
+
+            return;
+        }
+
+        current = current->next;
+    }
+
+    cout << "Student Not Found!" << endl;
+}
+
+// Lists every subject record across all students in the system,
+// grouped by student. Complements displaySubject(id), which only
+// shows one student's subjects.
+void ResultRecord::displayAllSubject()
+{
+    if(head==NULL)
+    {
+        cout<<"No Record Found!"<<endl;
+        return;
+    }
+
+    bool any=false;
+
+    Node *current=head;
+
+    cout<<"\n===== ALL SUBJECT RECORDS ====="<<endl;
+
+    while(current!=NULL)
+    {
+        if(current->totalSubject>0)
+        {
+            cout<<"\nStudent ID   : "<<current->student.studentID<<endl;
+            cout<<"Student Name : "<<current->student.name<<endl;
+            cout<<"--------------------------------------------------------"<<endl;
 
             for(int i=0;i<current->totalSubject;i++)
             {
-                cout<<left<<setw(15)<<current->subject[i].subjectCode<<setw(30)<<current->subject[i].subjectName<<setw(10)<<current->subject[i].marks<<setw(10)<<current->subject[i].grade<<endl;
+                cout<<left<<setw(16)<<"Subject Code"<<": "<<current->subject[i].subjectCode<<endl;
+                cout<<left<<setw(16)<<"Subject Name"<<": "<<current->subject[i].subjectName<<endl;
+                cout<<left<<setw(16)<<"Marks"<<": "<<current->subject[i].marks<<endl;
+                cout<<left<<setw(16)<<"Grade"<<": "<<current->subject[i].grade<<endl;
+                cout<<"--------------------------------------------------------"<<endl;
             }
-            cout<<"------------------------------------------------------------"<<endl;
-            return;
+
+            any=true;
         }
+
         current=current->next;
     }
-    cout<<"Student Not Found!"<<endl;
+
+    if(any==false)
+    {
+        cout<<"No Subject Records Found In The System!"<<endl;
+    }
 }
 
-// Overloaded sortRecord: mode 1 = sort by ID, mode 2 = sort by CGPA
 void ResultRecord::sortRecord(int mode)
 {
     if(mode==1)
@@ -1408,7 +1560,6 @@ void ResultRecord::sortRecord(int mode)
     }
 }
 
-// Bubble Sort by Student ID
 void ResultRecord::sortRecord()
 {
     if(head==NULL)
@@ -1464,7 +1615,6 @@ void ResultRecord::sortRecord()
     cout<<"Records Sorted Successfully!"<<endl;
 }
 
-// Bubble Sort by CGPA
 void ResultRecord::sortCGPA()
 {
     if(head==NULL)
@@ -1522,26 +1672,70 @@ void ResultRecord::sortCGPA()
     cout<<"Sorted by CGPA."<<endl;
 }
 
-// Show simple summary
+// Shows total students, average / highest / lowest CGPA, and how many
+// students fall into each classification band. Reuses the existing
+// classifyCGPA() helper instead of duplicating the band boundaries.
 void ResultRecord::summaryReport()
 {
+    if(head==NULL)
+    {
+        cout<<"No Record Found!"<<endl;
+        return;
+    }
+
     Node *current=head;
+
     int total=0;
+    float sum=0;
+    float highest=head->student.cgpa;
+    float lowest=head->student.cgpa;
+
+    int countFirst=0, countUpper=0, countLower=0, countThird=0, countFail=0;
+
     while(current!=NULL)
     {
         total++;
+        sum+=current->student.cgpa;
+
+        if(current->student.cgpa>highest) highest=current->student.cgpa;
+        if(current->student.cgpa<lowest) lowest=current->student.cgpa;
+
+        char band=classifyCGPA(current->student.cgpa);
+
+        switch(band)
+        {
+        case 'F': countFirst++; break;
+        case 'U': countUpper++; break;
+        case 'L': countLower++; break;
+        case 'T': countThird++; break;
+        default: countFail++;
+        }
 
         current=current->next;
     }
-    cout<<"\n===================================="<<endl;
-    cout<<"         SUMMARY REPORT"<<endl;
-    cout<<"===================================="<<endl;
-    cout<<left<<setw(25)<<"Total Students"<<total<<endl;
-    cout<<"===================================="<<endl;
+
+    cout<<endl;
+    cout<<"===== Summary Report ====="<<endl;
+    cout<<"Total Students       : "<<total<<endl;
+    cout<<"Average CGPA         : "<<sum/total<<endl;
+    cout<<"Highest CGPA         : "<<highest<<endl;
+    cout<<"Lowest CGPA          : "<<lowest<<endl;
+    cout<<"-----------------------------"<<endl;
+    cout<<"First Class          : "<<countFirst<<endl;
+    cout<<"Second Class (Upper) : "<<countUpper<<endl;
+    cout<<"Second Class (Lower) : "<<countLower<<endl;
+    cout<<"Third Class          : "<<countThird<<endl;
+    cout<<"Fail                 : "<<countFail<<endl;
 }
 
 void ResultRecord::saveSummary()
 {
+    if(head==NULL)
+    {
+        cout<<"No Record Found!"<<endl;
+        return;
+    }
+
     ofstream fout;
 
     fout.open("summary.txt");
@@ -1549,26 +1743,51 @@ void ResultRecord::saveSummary()
     Node *current=head;
 
     int total=0;
+    float sum=0;
+    float highest=head->student.cgpa;
+    float lowest=head->student.cgpa;
+
+    int countFirst=0, countUpper=0, countLower=0, countThird=0, countFail=0;
 
     while(current!=NULL)
     {
         total++;
+        sum+=current->student.cgpa;
+
+        if(current->student.cgpa>highest) highest=current->student.cgpa;
+        if(current->student.cgpa<lowest) lowest=current->student.cgpa;
+
+        char band=classifyCGPA(current->student.cgpa);
+
+        switch(band)
+        {
+        case 'F': countFirst++; break;
+        case 'U': countUpper++; break;
+        case 'L': countLower++; break;
+        case 'T': countThird++; break;
+        default: countFail++;
+        }
 
         current=current->next;
     }
 
     fout<<"===== Summary Report ====="<<endl;
-
-    fout<<"Total Students : "
-        <<total
-        <<endl;
+    fout<<"Total Students       : "<<total<<endl;
+    fout<<"Average CGPA         : "<<sum/total<<endl;
+    fout<<"Highest CGPA         : "<<highest<<endl;
+    fout<<"Lowest CGPA          : "<<lowest<<endl;
+    fout<<"-----------------------------"<<endl;
+    fout<<"First Class          : "<<countFirst<<endl;
+    fout<<"Second Class (Upper) : "<<countUpper<<endl;
+    fout<<"Second Class (Lower) : "<<countLower<<endl;
+    fout<<"Third Class          : "<<countThird<<endl;
+    fout<<"Fail                 : "<<countFail<<endl;
 
     fout.close();
 
     cout<<"Summary Saved Successfully!"<<endl;
 }
 
-// Search student by ID using Binary Search
 void ResultRecord::binarySearch()
 {
     sortRecord();
@@ -1620,7 +1839,6 @@ void ResultRecord::binarySearch()
     cout<<"Student Not Found"<<endl;
 }
 
-// Save report into report.txt
 void ResultRecord::generateReport()
 {
     ofstream fout;
@@ -1692,7 +1910,50 @@ void ResultRecord::generateReport()
     cout<<"Report Generated Successfully!"<<endl;
 }
 
-// Read summary file
+// Overloaded generateReport: produces a focused report for a single
+// student instead of the whole system.
+void ResultRecord::generateReport(char id[])
+{
+    Node *current=head;
+
+    while(current!=NULL)
+    {
+        if(strcmp(current->student.studentID,id)==0)
+        {
+            ofstream fout;
+
+            fout.open("report.txt");
+
+            fout<<"===== Individual Student Report ====="<<endl;
+
+            fout<<"Student ID : "<<current->student.studentID<<endl;
+            fout<<"Name : "<<current->student.name<<endl;
+            fout<<"Course : "<<current->student.course<<endl;
+            fout<<"CGPA : "<<current->student.cgpa<<endl;
+
+            fout<<endl<<"--- Subjects ---"<<endl;
+
+            for(int i=0;i<current->totalSubject;i++)
+            {
+                fout<<current->subject[i].subjectCode<<" - "
+                    <<current->subject[i].subjectName<<" : "
+                    <<current->subject[i].marks<<" ("
+                    <<current->subject[i].grade<<")"<<endl;
+            }
+
+            fout.close();
+
+            cout<<"Individual Report Generated Successfully!"<<endl;
+
+            return;
+        }
+
+        current=current->next;
+    }
+
+    cout<<"Student Not Found!"<<endl;
+}
+
 void ResultRecord::loadSummary()
 {
     ifstream fin;
@@ -1717,7 +1978,6 @@ void ResultRecord::loadSummary()
     fin.close();
 }
 
-// Display report file
 void ResultRecord::loadReport()
 {
     ifstream fin;
@@ -1825,6 +2085,36 @@ int ResultRecord::validateMarks(float m)
     }
 
     return 1;
+}
+
+// Finds and displays the student with the highest CGPA.
+void ResultRecord::topScorer()
+{
+    if(head==NULL)
+    {
+        cout<<"No Record Found!"<<endl;
+        return;
+    }
+
+    Node *current=head;
+    Node *best=head;
+
+    while(current!=NULL)
+    {
+        if(current->student.cgpa>best->student.cgpa)
+        {
+            best=current;
+        }
+
+        current=current->next;
+    }
+
+    cout<<"\n===== TOP SCORER ====="<<endl;
+
+    cout<<"Student ID : "<<best->student.studentID<<endl;
+    cout<<"Name : "<<best->student.name<<endl;
+    cout<<"Course : "<<best->student.course<<endl;
+    cout<<"CGPA : "<<best->student.cgpa<<endl;
 }
 
 bool ResultRecord::updateEnrolledCourse(char id[],char code[])
@@ -2158,21 +2448,21 @@ void CourseManager::displayRecord()
         return;
     }
 
-    cout<<"\n==================== COURSE LIST ====================\n";
+    cout<<"\n===== COURSE LIST ====="<<endl;
 
-    cout<<left <<setw(15)<<"Code" <<setw(30)<<"Course Name" <<setw(15)<<"Credit" <<setw(15)<<"Enrolled" <<endl;
-    cout<<"--------------------------------------------------------------"<<endl;
     CourseNode *current=courseHead;
 
     while(current!=NULL)
     {
-        cout<<left<<setw(15)<<current->course.courseCode<<setw(30)<<current->course.courseName<<setw(15)<<current->course.creditHours;
+        cout<<"Course Code : "<<current->course.courseCode<<endl;
+        cout<<"Course Name : "<<current->course.courseName<<endl;
+        cout<<"Credit Hours : "<<current->course.creditHours<<endl;
+        cout<<"Enrolled : "<<current->course.enrolledCount
+            <<" / "<<current->course.maxCapacity<<endl;
+        cout<<"---------------------"<<endl;
 
-        cout<<current->course.enrolledCount<<"/"<<current->course.maxCapacity<<endl;
-            
         current=current->next;
     }
-    cout<<"--------------------------------------------------------------"<<endl;
 }
 
 void CourseManager::displayRecord(char codeFilter[])
@@ -2653,18 +2943,18 @@ int adminAccessMenu()
 }
 
 // ============================================================
-// MENUS WITH SCREEN CLEARING AND PAUSING INTEGRATION
+// SUBMENUS GROUPING RELATED ADMIN ACTIONS (SAME PATTERN AS
+// COURSE MANAGEMENT)
 // ============================================================
-void adminMenu(ResultRecord &system, CourseManager &courses)
+void studentManagementMenu(ResultRecord &system)
 {
     int choice;
 
     do
     {
-        clearScreen(); 
+        clearScreen();
 
-        cout<<"\n========== ADMIN MENU =========="<<endl;
-
+        cout<<"\n----- STUDENT MANAGEMENT -----"<<endl;
         cout<<"1. Add Student"<<endl;
         cout<<"2. Display Student"<<endl;
         cout<<"3. Edit Student"<<endl;
@@ -2672,31 +2962,23 @@ void adminMenu(ResultRecord &system, CourseManager &courses)
         cout<<"5. Search Student"<<endl;
         cout<<"6. Sort By Student ID"<<endl;
         cout<<"7. Sort By CGPA"<<endl;
-        cout<<"8. Add Subject"<<endl;
-        cout<<"9. Display Subject"<<endl;
-        cout<<"10. Binary Search"<<endl;
-        cout<<"11. Generate Report"<<endl;
-        cout<<"12. View Report"<<endl;
-        cout<<"13. View Statistics"<<endl;
-        cout<<"14. Course Management"<<endl;
-        cout<<"15. CGPA Classification Report"<<endl;
-        cout<<"16. Exit"<<endl;
+        cout<<"8. Back to Admin Menu"<<endl;
 
         cout<<"Enter Choice : ";
         cin>>choice;
 
-        if (cin.fail()) {
-
+        if(cin.fail())
+        {
             cin.clear();
-            cin.ignore(1000, '\n');
-            choice = 0; 
+            cin.ignore(1000,'\n');
+            choice=0;
         }
 
         switch(choice)
         {
         case 1:
             system.addRecord();
-            pauseScreen(); 
+            pauseScreen();
             break;
 
         case 2:
@@ -2730,31 +3012,193 @@ void adminMenu(ResultRecord &system, CourseManager &courses)
             break;
 
         case 8:
+            cout<<"Back to Admin Menu"<<endl;
+            break;
+
+        default:
+            cout<<"Invalid Choice!"<<endl;
+            pauseScreen();
+        }
+
+    }while(choice!=8);
+}
+
+void subjectManagementMenu(ResultRecord &system)
+{
+    int choice;
+
+    do
+    {
+        clearScreen();
+
+        cout<<"\n----- SUBJECT MANAGEMENT -----"<<endl;
+        cout<<"1. Add Subject"<<endl;
+        cout<<"2. Edit Subject"<<endl;
+        cout<<"3. Delete Subject"<<endl;
+        cout<<"4. Display Subject (By Student ID)"<<endl;
+        cout<<"5. Display All Subjects"<<endl;
+        cout<<"6. Back to Admin Menu"<<endl;
+
+        cout<<"Enter Choice : ";
+        cin>>choice;
+
+        if(cin.fail())
+        {
+            cin.clear();
+            cin.ignore(1000,'\n');
+            choice=0;
+        }
+
+        switch(choice)
+        {
+        case 1:
             system.addSubject();
             pauseScreen();
             break;
 
-        case 9:
+        case 2:
+        {
+            char id[20];
+
+            cout<<"Enter Student ID : ";
+            cin>>id;
+
+            system.editSubject(id);
+
+            pauseScreen();
+
+            break;
+        }
+
+        case 3:
+        {
+            char id[20];
+
+            cout<<"Enter Student ID : ";
+            cin>>id;
+
+            system.deleteSubject(id);
+
+            pauseScreen();
+
+            break;
+        }
+
+        case 4:
             system.displaySubject();
             pauseScreen();
             break;
 
-        case 10:
+        case 5:
+            system.displayAllSubject();
+            pauseScreen();
+            break;
+
+        case 6:
+            cout<<"Back to Admin Menu"<<endl;
+            break;
+
+        default:
+            cout<<"Invalid Choice!"<<endl;
+            pauseScreen();
+        }
+
+    }while(choice!=6);
+}
+
+// ============================================================
+// MENUS WITH SCREEN CLEARING AND PAUSING INTEGRATION
+// ============================================================
+void adminMenu(ResultRecord &system, CourseManager &courses)
+{
+    int choice;
+
+    do
+    {
+        clearScreen(); 
+
+        cout<<"\n========== ADMIN MENU =========="<<endl;
+
+        cout<<"1. Student Management"<<endl;
+        cout<<"2. Subject Management"<<endl;
+        cout<<"3. Binary Search"<<endl;
+        cout<<"4. Generate Report"<<endl;
+        cout<<"5. View Report"<<endl;
+        cout<<"6. View Statistics"<<endl;
+        cout<<"7. Top Scorer"<<endl;
+        cout<<"8. Course Management"<<endl;
+        cout<<"9. CGPA Classification Report"<<endl;
+        cout<<"10. Add Admin"<<endl;
+        cout<<"11. Exit"<<endl;
+
+        cout<<"Enter Choice : ";
+        cin>>choice;
+
+        if (cin.fail()) {
+
+            cin.clear();
+            cin.ignore(1000, '\n');
+            choice = 0; 
+        }
+
+        switch(choice)
+        {
+        case 1:
+            studentManagementMenu(system);
+            break;
+
+        case 2:
+            subjectManagementMenu(system);
+            break;
+
+        case 3:
             system.binarySearch();
             pauseScreen();
             break;
 
-        case 11:
-            system.generateReport();
-            pauseScreen();
-            break;
+        case 4:
+        {
+            int reportChoice;
 
-        case 12:
+            cout<<"\n----- GENERATE REPORT -----"<<endl;
+            cout<<"1. All Students"<<endl;
+            cout<<"2. Single Student"<<endl;
+
+            cout<<"Enter Choice : ";
+            cin>>reportChoice;
+
+            if(cin.fail())
+            {
+                cin.clear();
+                cin.ignore(1000,'\n');
+                reportChoice=0;
+            }
+
+            if(reportChoice==2)
+            {
+                char reportID[20];
+
+                cout<<"Enter Student ID : ";
+                cin>>reportID;
+
+                system.generateReport(reportID);
+            }
+            else
+            {
+                system.generateReport();
+            }
+
+            pauseScreen();
+
+            break;
+        }
+
+        case 5:
             system.loadReport();
             pauseScreen();
             break;
 
-        case 13:
+        case 6:
             totalStudent(system);
             highestCGPA(system);
             lowestCGPA(system);
@@ -2762,7 +3206,12 @@ void adminMenu(ResultRecord &system, CourseManager &courses)
             pauseScreen();
             break;
 
-        case 14:
+        case 7:
+            system.topScorer();
+            pauseScreen();
+            break;
+
+        case 8:
         {
             int courseChoice;
 
@@ -2782,19 +3231,13 @@ void adminMenu(ResultRecord &system, CourseManager &courses)
 
                 cout<<"Enter Choice : ";
                 cin>>courseChoice;
-                
-                if (cin.fail()) {
-                    cin.clear();
-                    cin.ignore(1000, '\n');
-                    choice = 0; 
-                }
 
                 if(cin.fail())
                 {
                     cin.clear();
                     cin.ignore(1000,'\n');
                     courseChoice=0;
-                    
+
                     cout<<"\nInvalid Choice!"<<endl;
                     pauseScreen();
                     continue;
@@ -2851,7 +3294,7 @@ void adminMenu(ResultRecord &system, CourseManager &courses)
             break;
         }
 
-        case 15:
+        case 9:
         {
             int subChoice;
             cout<<"\n----- CGPA CLASSIFICATION -----"<<endl;
@@ -2878,7 +3321,15 @@ void adminMenu(ResultRecord &system, CourseManager &courses)
             break;
         }
 
-        case 16:
+        case 10:
+        {
+            Admin newAdmin;
+            newAdmin.registerAccount();
+            pauseScreen();
+            break;
+        }
+
+        case 11:
             {
                 char confirm;
             
@@ -2887,7 +3338,7 @@ void adminMenu(ResultRecord &system, CourseManager &courses)
             
                 if(confirm=='Y' || confirm=='y')
                 {
-                    choice=16;
+                    choice=11;
                 }
                 else
                 {
@@ -2902,7 +3353,7 @@ void adminMenu(ResultRecord &system, CourseManager &courses)
             pauseScreen();
         }
 
-    }while(choice!=16);
+    }while(choice!=11);
 }
 
 void studentMenu(StudentUser &student, ResultRecord &system, CourseManager &courses)
@@ -2921,12 +3372,13 @@ void studentMenu(StudentUser &student, ResultRecord &system, CourseManager &cour
         cout<<"4. Summary Report"<<endl;
         cout<<"5. Save Summary"<<endl;
         cout<<"6. View Saved Summary"<<endl;
-        cout<<"7. Browse Available Courses"<<endl;
-        cout<<"8. Enroll In A Course"<<endl;
-        cout<<"9. Sort Result By Student ID"<<endl;
-        cout<<"10. Sort Result By CGPA"<<endl;
-        cout<<"11. Delete My Subject Record"<<endl;
-        cout<<"12. Exit"<<endl;
+        cout<<"7. View My Subjects"<<endl;
+        cout<<"8. Browse Available Courses"<<endl;
+        cout<<"9. Enroll In A Course"<<endl;
+        cout<<"10. Sort Result By Student ID"<<endl;
+        cout<<"11. Sort Result By CGPA"<<endl;
+        cout<<"12. Top Scorer"<<endl;
+        cout<<"13. Exit"<<endl;
 
         cout<<"Enter Choice : ";
         cin>>choice;
@@ -2969,12 +3421,19 @@ void studentMenu(StudentUser &student, ResultRecord &system, CourseManager &cour
             break;
 
         case 7:
-            courses.displayRecord();
+            system.displaySubject((char*)student.getStudentID());
             pauseScreen();
             break;
 
         case 8:
+            courses.displayRecord();
+            pauseScreen();
+            break;
+
+        case 9:
         {
+        	courses.displayRecord();
+        	
             char courseCode[20];
             cout<<"Enter Course Code : ";
             cin>>courseCode;
@@ -2987,22 +3446,22 @@ void studentMenu(StudentUser &student, ResultRecord &system, CourseManager &cour
             break;
         }
 
-        case 9:
+        case 10:
             system.sortRecord(1);
             pauseScreen();
             break;
 
-        case 10:
+        case 11:
             system.sortRecord(2);
             pauseScreen();
             break;
 
-        case 11:
-            system.deleteSubject((char*)student.getStudentID());
+        case 12:
+            system.topScorer();
             pauseScreen();
             break;
 
-        case 12:
+        case 13:
             {
                 char confirm;
             
@@ -3011,7 +3470,7 @@ void studentMenu(StudentUser &student, ResultRecord &system, CourseManager &cour
             
                 if(confirm=='Y' || confirm=='y')
                 {
-                    choice=12;
+                    choice=13;
                 }
                 else
                 {
@@ -3026,7 +3485,7 @@ void studentMenu(StudentUser &student, ResultRecord &system, CourseManager &cour
             pauseScreen();
         }
 
-    }while(choice!=12);
+    }while(choice!=13);
 }
 
 
